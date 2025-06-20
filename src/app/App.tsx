@@ -1,8 +1,16 @@
 import React from 'react'
 import { AppRouter } from './routes/AppRouter'
+import { ChakraProvider } from '@chakra-ui/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-function App() {
-  return <AppRouter />
-}
+const queryClient = new QueryClient()
+
+const App = () => (
+  <ChakraProvider>
+    <QueryClientProvider client={queryClient}>
+      <AppRouter />
+    </QueryClientProvider>
+  </ChakraProvider>
+)
 
 export default App
