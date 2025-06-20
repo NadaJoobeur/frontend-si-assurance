@@ -7,7 +7,9 @@ export const useLogin = () => {
     mutationFn: login,
     onSuccess: (data) => {
       localStorage.setItem('token', data.token)
-      // rediriger ou afficher un message
+      localStorage.setItem('username', data.user.name) // <-- Ajoute cette ligne
+
+      
     },
     onError: (error: AxiosError) => {
       console.error('Login error:', error.response?.data || error.message)
