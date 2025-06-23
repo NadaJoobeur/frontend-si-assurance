@@ -8,7 +8,7 @@ export const useLogin = () => {
     onSuccess: (data) => {
       localStorage.setItem('token', data.token)
       localStorage.setItem('username', data.user.name) // <-- Ajoute cette ligne
-
+      localStorage.setItem('idUser', data.user.id) 
       
     },
     onError: (error: AxiosError) => {

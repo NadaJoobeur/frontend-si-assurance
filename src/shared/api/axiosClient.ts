@@ -14,11 +14,15 @@ axiosClient.interceptors.request.use(
     const token = localStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
+      console.log('Token ajouté dans la requête:', token)
+    } else {
+      console.log('Pas de token dans localStorage')
     }
     return config
   },
   (error) => Promise.reject(error)
 )
+
 
 // **Intercepteur de réponse : gère les erreurs 401**
 axiosClient.interceptors.response.use(
