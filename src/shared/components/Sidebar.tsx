@@ -46,6 +46,7 @@ const Sidebar = () => {
   const navItems = [
     { label: 'Accueil', path: '/homePage' },
     { label: 'Personne', path: '/person/list' },
+    { label: 'Garantie', path: '/garantie' },
     { label: 'Contrat', path: '/contrat/list' },
     { label: 'Sinistre', path: '/sinistre' },
     { label: 'Devis', path: '/devis' },

@@ -46,8 +46,11 @@ export interface ProfilVehiculeData {
   valeurCatalogue?: string;
 }
 
+
 export interface NouveauContratPayload {
   contrat: ContratFormData;
   garanties: GarantieContratData[];
   profilVehicule: ProfilVehiculeData;
+
 }
+

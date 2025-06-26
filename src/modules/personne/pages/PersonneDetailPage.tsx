@@ -29,8 +29,11 @@ import {
   Button,
   useToast,
   Spinner,
+ 
 } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 import { ChevronLeftIcon, EditIcon, DeleteIcon} from '@chakra-ui/icons';
+import { useContratsClient } from '../hooks/useContratsClient';
 
 import { useDetailPersonne } from '../hooks/usePersonne';
 import { useDeletePersonne } from '../hooks/useDeletePersonne';
@@ -52,7 +55,8 @@ console.log(personneData)
 
   // Handlers
   const handleEdit = () => navigate(`/person/edit/${numeroIdentification}`);
-  
+  const { contrats, loading: loadingContrats } = useContratsClient(numeroIdentification!);
+
   const { mutate: deletePersonne } = useDeletePersonne();
   const handleDelete = () => {
     setIsDeleting(true);
@@ -167,11 +171,12 @@ console.log(personneData)
 
             {/* Onglets Adresses / Téléphones / Emails */}
             <Tabs variant="enclosed" colorScheme="blue" size="lg">
-              <TabList>
+             <TabList>
                 <Tab fontSize="md">Adresses</Tab>
                 <Tab fontSize="md">Téléphones</Tab>
                 <Tab fontSize="md">Emails</Tab>
-              </TabList>
+                <Tab fontSize="md">Contrats</Tab>
+            </TabList>
 
               <TabPanels mt={2}>
                 {/* Adresses */}
@@ -285,6 +290,54 @@ console.log(personneData)
                     </Text>
                   )}
                 </TabPanel>
+               <TabPanel>
+  {loadingContrats ? (
+    <Flex justify="center" py={10}>
+      <Spinner size="xl" />
+    </Flex>
+  ) : contrats.length > 0 ? (
+    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+      {contrats.map((contrat) => (
+        <Link 
+          key={contrat.numeroContrat}
+          to={`/contrat/detail/${contrat.numeroContrat}`}
+          style={{ textDecoration: 'none' }}
+        >
+          <Box
+            p={4}
+            borderWidth="1px"
+            borderRadius="lg"
+            boxShadow="md"
+            _hover={{ 
+              boxShadow: 'lg',
+              transform: 'translateY(-2px)',
+              transition: 'all 0.2s ease'
+            }}
+            cursor="pointer"
+          >
+            <Flex justify="space-between" mb={2}>
+              <Heading size="md">{contrat.numeroContrat}</Heading>
+              <Badge colorScheme={contrat.statutContrat === 'ACTIF' ? 'green' : 'red'}>
+                {contrat.statutContrat}
+              </Badge>
+            </Flex>
+            
+            <Stack spacing={2}>
+              <InfoItem label="Branche" value={contrat.branche} />
+              <InfoItem label="Prime Annuelle" value={contrat.primeAnnuelle} />
+              <InfoItem label="Date Effet" value={contrat.dateEffet} />
+              <InfoItem label="Date Expiration" value={contrat.dateExpiration} />
+            </Stack>
+          </Box>
+        </Link>
+      ))}
+    </SimpleGrid>
+  ) : (
+    <Text fontSize="lg" color="gray.500" mt={4}>
+      Aucun contrat trouvé
+    </Text>
+  )}
+</TabPanel>
               </TabPanels>
             </Tabs>
           </Box>
