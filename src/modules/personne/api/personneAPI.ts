@@ -1,4 +1,5 @@
 import axiosClient from '../../../shared/api/axiosClient'
+import type { ContratFormData } from '../../contrat/types/Contrat'
 import type { Personne } from '../types/personne'
 
 // ownerId est obligatoire pour plusieurs routes, numeroIdentification correspond à l'id unique de la personne
@@ -39,3 +40,26 @@ export const checkPersonExist = async (numeroIdentification: string): Promise<bo
   const { data } = await axiosClient.get(`personnes/${numeroIdentification}/existence-client`)
   return data
 }
+
+export const getClientContrat = async (
+  numeroIdentification: string,
+  filters: { etatContrat: string; echeance?: string }
+): Promise<ContratFormData[]> => {
+  try {
+    const params = {
+      etatContrat: filters.etatContrat || 'ACTIF', // Valeur par défaut
+      ...(filters.echeance && { echeance: filters.echeance }) // Paramètre optionnel
+    };
+
+    const { data } = await axiosClient.get(
+      `contrats/${numeroIdentification}/contrats-client`,
+      { params }
+    );
+    
+    return data;
+  } catch (error) {
+    console.error('Erreur dans getClientContrat:', error);
+    throw error;
+  }
+};
+

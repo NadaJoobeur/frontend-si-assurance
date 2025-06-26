@@ -17,14 +17,14 @@ import {
   Tooltip,
   Button
 } from '@chakra-ui/react';
-import { SearchIcon, AddIcon } from '@chakra-ui/icons';
+import { SearchIcon, AddIcon, CloseIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useContrats } from '../hooks/useContrats';
 import ContratItem from '../components/ContratItem';
 import Sidebar from '../../../shared/components/Sidebar';
 import Footer from '../../../shared/components/Footer';
-import { DeleteContrat } from '../api/contratApi'; // <--- à adapter si tu utilises un hook
+import { DeleteContrat } from '../api/contratApi';
 
 const ContratsPage = () => {
   const navigate = useNavigate();
@@ -76,7 +76,7 @@ const ContratsPage = () => {
         duration: 3000,
         isClosable: true,
       });
-      refetch(); // Rafraîchir la liste après suppression
+      refetch();
     } catch (error: any) {
       toast({
         title: 'Erreur lors de la suppression',
@@ -110,15 +110,13 @@ const ContratsPage = () => {
   }
 
   return (
-    <Box minH="100vh" bg={bgColor} display="flex"   _focus={{ outline: "none" }}
->
+    <Box minH="100vh" bg={bgColor} display="flex" _focus={{ outline: "none" }}>
       <Box w="260px" flexShrink={0}>
         <Sidebar />
       </Box>
 
       <Flex flex="1" direction="column" minH="100vh">
         <Box flex="1" px={{ base: 4, md: 10 }} py={10} overflowY="auto">
-          
           <Heading
             fontWeight="bold"
             fontSize={{ base: '2xl', md: '3xl' }}
@@ -129,30 +127,68 @@ const ContratsPage = () => {
             Liste des Contrats
           </Heading>
 
-          <Flex justify="center" mb={8}>
+          <Flex justify="center" mb={8} position="relative">
             <InputGroup maxW="600px">
               <Input
-                placeholder="Rechercher par numéro ..."
+                placeholder="Rechercher un contrat par numéro..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 borderRadius="full"
                 size="lg"
                 bg={inputBg}
                 color={inputColor}
-                _placeholder={{ color: placeholderColor }}
-                shadow="sm"
+                _placeholder={{ 
+                  color: placeholderColor,
+                  fontSize: { base: 'sm', md: 'md' }
+                }}
+                shadow="md"
+                pr="4.5rem"
+                _focus={{
+                  borderColor: 'blue.500',
+                  boxShadow: '0 0 0 1px rgba(66, 153, 225, 0.6)'
+                }}
+                transition="all 0.2s ease"
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
-              <InputRightElement width="4.5rem">
+              
+              <InputRightElement width="4.5rem" h="full">
                 <IconButton
                   aria-label="Rechercher"
                   icon={<SearchIcon />}
-                  colorScheme="teal"
-                  size="sm"
+                  size="lg"
+                  h="full"
+                  w="full"
+                  borderTopRightRadius="full"
+                  borderBottomRightRadius="full"
+                  colorScheme="blue"
+                  _hover={{ 
+                    bg: 'blue.600',
+                    transform: 'scale(1.02)'
+                  }}
+                  _active={{
+                    bg: 'blue.700',
+                    transform: 'scale(0.98)'
+                  }}
                   onClick={handleSearch}
-                  rounded="full"
                 />
               </InputRightElement>
+
+              {searchTerm && (
+                <IconButton
+                  aria-label="Effacer la recherche"
+                  icon={<CloseIcon boxSize={3} />}
+                  position="absolute"
+                  right="4.5rem"
+                  top="50%"
+                  transform="translateY(-50%)"
+                  size="sm"
+                  rounded="full"
+                  colorScheme="gray"
+                  variant="ghost"
+                  onClick={() => setSearchTerm('')}
+                  zIndex="1"
+                />
+              )}
             </InputGroup>
           </Flex>
 
@@ -165,18 +201,18 @@ const ContratsPage = () => {
             </Flex>
           ) : filteredData.length > 0 ? (
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-           {filteredData.map((contratData, index) => (
-  <ContratItem
-    key={contratData.numeroContrat ?? `contrat-${index}`}
-    contratData={contratData}
-    onClick={() =>
-      contratData.numeroContrat &&
-      navigate(`/contrat/detail/${contratData.numeroContrat}`)
-    }
-    onDelete={handleDelete}
-    onEdit={(numeroContrat) => navigate(`/contrat/edit/${numeroContrat}`)} // <-- utilise la variable de la fonction !
-  />
-))}
+              {filteredData.map((contratData, index) => (
+                <ContratItem
+                  key={contratData.numeroContrat ?? `contrat-${index}`}
+                  contratData={contratData}
+                  onClick={() =>
+                    contratData.numeroContrat &&
+                    navigate(`/contrat/detail/${contratData.numeroContrat}`)
+                  }
+                  onDelete={handleDelete}
+                  onEdit={(numeroContrat) => navigate(`/contrat/edit/${numeroContrat}`)}
+                />
+              ))}
             </SimpleGrid>
           ) : (
             <Text textAlign="center" fontSize="lg" mt={10} color="gray.500">
@@ -202,6 +238,7 @@ const ContratsPage = () => {
           right="40px"
           leftIcon={<AddIcon />}
           _hover={{ transform: 'scale(1.1)' }}
+          zIndex={1000}
         >
           Ajouter
         </Button>
