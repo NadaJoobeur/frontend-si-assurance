@@ -14,6 +14,7 @@ import {
   IconButton,
   Tooltip,
   SimpleGrid,
+  
 } from '@chakra-ui/react'
 import { AddIcon, SearchIcon } from '@chakra-ui/icons'
 import { useState, useEffect } from 'react'
@@ -231,24 +232,29 @@ const PersonnesListPage = () => {
         <Box borderTop="1px solid" borderColor={useColorModeValue('gray.200', 'gray.700')}>
           <Footer />
         </Box>
-      </Flex>
 
       <Tooltip label="Ajouter une personne" placement="left" hasArrow>
-        <Button
-          onClick={() => navigate('/person/add')}
-          colorScheme="green"
-          size="lg"
-          rounded="full"
-          shadow="xl"
-          position="fixed"
-          bottom="40px"
-          right="40px"
-          leftIcon={<AddIcon />}
-          _hover={{ transform: 'scale(1.1)' }}
-        >
-          Ajouter
-        </Button>
-      </Tooltip>
+    <Button
+      onClick={() => navigate('/person/add')}
+      colorScheme="green"
+      size="lg"
+      rounded="full"
+      shadow="xl"
+      position="fixed"
+      bottom="40px"
+      right="40px"
+      leftIcon={<AddIcon />}
+      _hover={{ transform: 'scale(1.1)' }}
+      zIndex={1000}
+    >
+      Ajouter
+    </Button>
+  </Tooltip>
+
+      </Flex>
+
+   
+  
     </Box>
   )
 }

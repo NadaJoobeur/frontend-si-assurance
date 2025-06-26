@@ -5,48 +5,50 @@ import {
   Heading,
   Text,
   Flex,
-  HStack,
-  useToast,
+  Badge,
+  Stack,
+  Divider,
+  useDisclosure,
+  IconButton,
+  SimpleGrid,
+  Tag,
+  TagLabel,
+  useColorModeValue,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
+  ModalCloseButton,
   ModalBody,
   ModalFooter,
-  ModalCloseButton,
   Button,
-  useDisclosure,
-  Stack,
-  Divider,
+  useToast,
   Spinner,
-  IconButton,
-  useColorModeValue,
-  SimpleGrid
 } from '@chakra-ui/react';
-import { EditIcon, DeleteIcon, CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
+import { ChevronLeftIcon, EditIcon, DeleteIcon} from '@chakra-ui/icons';
 
 import { useDetailPersonne } from '../hooks/usePersonne';
 import { useDeletePersonne } from '../hooks/useDeletePersonne';
-import Navbar from '../../../shared/components/Sidebar';
+import Sidebar from '../../../shared/components/Sidebar';
 import Footer from '../../../shared/components/Footer';
 
 const PersonneDetailPage = () => {
-  // Hooks et état
   const { numeroIdentification } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isDeleting, setIsDeleting] = useState(false);
-  const { data, isLoading } = useDetailPersonne(numeroIdentification!);
-
+  const { data: personneData, isLoading } = useDetailPersonne(numeroIdentification!);
+console.log(personneData)
   // Couleurs du thème
-  const theme = {
-    borderColor: useColorModeValue('blue.500', 'blue.300'),
-    textColor: useColorModeValue('gray.800', 'gray.100'),
-    cardBg: useColorModeValue('white', 'gray.800'),
-    pageBg: useColorModeValue('gray.50', 'gray.900'),
-    dividerColor: useColorModeValue('blue.300', 'blue.600')
-  };
+  const cardBg = useColorModeValue('white', 'gray.700');
+  const dividerColor = useColorModeValue('gray.200', 'gray.600');
+  const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   // Handlers
   const handleEdit = () => navigate(`/person/edit/${numeroIdentification}`);
@@ -76,237 +78,263 @@ const PersonneDetailPage = () => {
     }
   };
 
-  // Composants réutilisables
-  const InfoBox = ({ label, value }: { label: string; value?: string | number | boolean }) => (
-    <Box
-      p={5}
-      rounded="xl"
-      border="1px solid"
-      borderColor={theme.borderColor}
-      _hover={{ 
-        borderColor: useColorModeValue('blue.600', 'blue.400'), 
-        transform: 'scale(1.02)', 
-        transition: 'all 0.3s ease' 
-      }}
-      userSelect="none"
-      height="90%"
-    >
-      <Text fontWeight="bold" >
-        {label}: <Text as="span" fontWeight="normal">{value?.toString() || '-'}</Text>
-      </Text>
-    </Box>
-  );
-
-  const SectionHeader = ({ title }: { title: string }) => (
-    <>
-      <Divider borderColor={theme.dividerColor} />
-      <Heading size="md" mb={1} textTransform="uppercase" letterSpacing="wider" color={theme.borderColor}>
-        {title}
-      </Heading>
-    </>
-  );
-
-  const ContactItem = ({ children }: { children: React.ReactNode }) => (
-    <Box
-      p={2}
-      mb={1}
-      rounded="md"
-      border="1px solid"
-      borderColor={theme.borderColor}
-      _hover={{ 
-        borderColor: useColorModeValue('blue.600', 'blue.400'), 
-        transform: 'scale(1.02)', 
-        transition: 'all 0.25s ease' 
-      }}
-    >
-      {children}
-    </Box>
-  );
-
-  // Rendu principal
-  return (
-    <Box minH="100vh" bg={theme.pageBg} display="flex" flexDirection="column">
-      <Navbar />
-
-      <Flex flex="1" justify="center" align="center" py={{ base: 10, md: 16 }} px={4}>
-        <Box
-          maxW="container.md"
-          w="full"
-          border="2px solid"
-          borderColor={theme.borderColor}
-          rounded="3xl"
-          p={{ base: 8, md: 10 }}
-          boxShadow="lg"
-          bg={theme.cardBg}
-          color={theme.textColor}
-        >
-          {isLoading ? (
-            <Flex justify="center" align="center" minH="200px">
-              <Spinner size="xl" thickness="4px" color={theme.textColor} />
-            </Flex>
-          ) : data ? (
-            <>
-              {/* En-tête avec nom et actions */}
-              <Flex justify="space-between" align="center" mb={8} flexWrap="wrap" gap={4}>
-                <Heading
-                  fontSize={{ base: '3xl', md: '5xl' }}
-                  fontWeight="extrabold"
-                  flex="1"
-                  minW={{ base: '100%', md: 'auto' }}
-                  textShadow="0 2px 8px rgba(0,0,0,0.1)"
-                  color={theme.textColor}
-                >
-                  {data.nom} {data.prenom}
-                </Heading>
-
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  px={5}
-                  py={2}
-                  bg={data.blackList ? 'red.600' : 'green.600'}
-                  color="white"
-                  fontWeight="semibold"
-                  fontSize="md"
-                  rounded="full"
-                  boxShadow="md"
-                  userSelect="none"
-                  _hover={{
-                    bg: data.blackList ? 'red.500' : 'green.500',
-                    transform: 'scale(1.07)',
-                    transition: 'all 0.25s ease-in-out',
-                  }}
-                >
-                  {data.blackList ? <WarningIcon mr={3} /> : <CheckCircleIcon mr={3} />}
-                  {data.blackList ? 'Blacklisté' : 'Non blacklisté'}
-                </Box>
-
-                <HStack spacing={4}>
-                  <IconButton
-                    aria-label="Modifier"
-                    icon={<EditIcon />}
-                    colorScheme="teal"
-                    variant="solid"
-                    onClick={handleEdit}
-                    size="md"
-                    boxShadow="md"
-                    _hover={{ bg: 'teal.600' }}
-                  />
-                  <IconButton
-                    aria-label="Supprimer"
-                    icon={<DeleteIcon />}
-                    colorScheme="red"
-                    variant="solid"
-                    onClick={onOpen}
-                    size="md"
-                    boxShadow="md"
-                    _hover={{ bg: 'red.600' }}
-                  />
-                </HStack>
-              </Flex>
-
-              <Stack spacing={6}>
-                {/* Informations principales - disposition deux par deux */}
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={2}>
-                  {[
-                    { label: 'Identifiant', value: numeroIdentification },
-                    { label: 'Raison Sociale', value: data.raisonSociale },
-                    { label: 'Activité', value: data.activite },
-                    { label: 'Date de Naissance', value: data.dateDeNaissance },
-                  ].map((info) => (
-                    <InfoBox key={info.label} label={info.label} value={info.value} />
-                  ))}
-                </SimpleGrid>
-
-                              {/* Adresses */}
-                              <SectionHeader title="Adresses" />
-              {data.listeAdresse?.map((adresse, idx) => (
-                <ContactItem key={idx}>
-                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={2}>
-                    <Text><strong>Numéro Rue:</strong> {adresse.numRue || '-'}</Text>
-                    <Text><strong>Nom Rue:</strong> {adresse.nomRue || '-'}</Text>
-                    <Text><strong>Code Postal:</strong> {adresse.codePostal || '-'}</Text>
-                    <Text><strong>Délégation:</strong> {adresse.delegation || '-'}</Text>
-                    <Text><strong>Contact par défaut:</strong> {adresse.contactParDefaut ? 'Oui' : 'Non'}</Text>
-                  </SimpleGrid>
-                </ContactItem>
-              )) ?? <Text>Aucune adresse enregistrée.</Text>}
-
-             
-                {/* Téléphones */}
-                  <SectionHeader title="Téléphones" />
-                  {(data.listeTelephone ?? []).length > 0 ? (
-                    (data.listeTelephone ?? []).map((tel, idx) => (
-                      <ContactItem key={idx}>
-                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={2}>
-                          <Text><strong>Numéro:</strong> {tel.numeroTelephone || '-'}</Text>
-                          <Text><strong>Type:</strong> {tel.typeTelephone || '-'}</Text>
-                          <Text><strong>Contact par défaut:</strong> {tel.contactParDefaut ? 'Oui' : 'Non'}</Text>
-                        </SimpleGrid>
-                      </ContactItem>
-                    ))
-                  ) : (
-                    <Text>Aucun téléphone enregistré.</Text>
-                  )}
-
-                  {/* Emails */}
-                  <SectionHeader title="Emails" />
-                  {(data.listeMails ?? []).length > 0 ? (
-                    (data.listeMails ?? []).map((mail, idx) => (
-                      <ContactItem key={idx}>
-                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={2}>
-                          <Text><strong>Adresse mail:</strong> {mail.adresseMail || '-'}</Text>
-                          <Text><strong>Contact par défaut:</strong> {mail.contactParDefaut ? 'Oui' : 'Non'}</Text>
-                        </SimpleGrid>
-                      </ContactItem>
-                    ))
-                  ) : (
-                    <Text>Aucun email enregistré.</Text>
-                  )}
-              </Stack>
-            </>
-          ) : (
-            <Text
-              textAlign="center"
-              fontSize="xl"
-              fontWeight="semibold"
-              py={20}
-            >
-              Personne non trouvée.
-            </Text>
-          )}
-        </Box>
+  if (isLoading) {
+    return (
+      <Flex justify="center" align="center" minH="100vh">
+        <Spinner size="xl" color="blue.500" />
       </Flex>
+    );
+  }
 
-      <Footer />
+  if (!personneData) {
+    return (
+      <Flex justify="center" align="center" minH="100vh">
+        <Text>Personne non trouvée</Text>
+      </Flex>
+    );
+  }
 
-      {/* Modal de confirmation de suppression */}
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent rounded="2xl" boxShadow="xl">
-          <ModalHeader>Confirmer la suppression</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text fontSize="lg">
-              Êtes-vous sûr de vouloir supprimer{' '}
-              <Box as="span" fontWeight="bold">
-                {data?.nom} {data?.prenom}
-              </Box>
-              ? Cette action est irréversible.
-            </Text>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose} isDisabled={isDeleting}>
-              Annuler
-            </Button>
-            <Button colorScheme="red" onClick={handleDelete} isLoading={isDeleting}>
-              Supprimer
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Box>
+  return (
+    <Flex minH="100vh">
+      <Sidebar />
+      <Box flex="1" display="flex" flexDirection="column" ml={{ base: 0, md: 60 }}>
+        {/* Contenu principal */}
+        <Box flex="1" p={{ base: 4, md: 8 }} w="full" maxW="none" mx="auto">
+       
+
+          {/* Carte principale */}
+          <Box 
+            bg={cardBg} 
+            borderRadius="lg" 
+            boxShadow="md" 
+            p={{ base: 2, md: 4 }}
+            mb={2}
+            w="full"
+            minH="70vh"
+          >
+               {/* Header avec bouton retour */}
+          <Flex align="center" mb={2} gap={2}>
+            <IconButton
+              aria-label="Retour"
+              icon={<ChevronLeftIcon />}
+              onClick={() => navigate(-1)}
+            />
+            <Heading size="lg" flex={1}>
+              {personneData.nom} {personneData.prenom}
+            </Heading>
+            
+            <Badge
+              colorScheme={personneData.blackList ? 'red' : 'green'}
+              px={2}
+              py={1}
+              borderRadius="full"
+              fontSize="md"
+            >
+              {personneData.blackList ? 'Blacklisté' : 'Non blacklisté'}
+            </Badge>
+            
+            <IconButton
+              aria-label="Modifier"
+              colorScheme="teal"
+              variant="solid"
+              size="md"
+              boxShadow="md"
+              _hover={{ bg: 'teal.600', transform: 'translateY(-2px)' }}
+              _active={{ bg: 'teal.700' }}
+              icon={<EditIcon />}
+              onClick={handleEdit}
+            />
+            <IconButton
+              aria-label="Supprimer"
+              icon={<DeleteIcon />}
+              colorScheme="red"
+              variant="solid"
+              onClick={onOpen}
+              size="md"
+              boxShadow="md"
+              _hover={{ bg: 'red.600' }}
+            />
+          </Flex>
+            {/* Informations principales */}
+            <SimpleGrid columns={{ base: 1, md: 4, lg: 4 }} spacing={1} mb={3}>
+              <InfoItem label="Identifiant" value={numeroIdentification} />
+              <InfoItem label="Raison Sociale" value={personneData.raisonSociale} />
+              <InfoItem label="Activité" value={personneData.activite} />
+              <InfoItem label="Date de Naissance" value={personneData.dateDeNaissance} />
+            </SimpleGrid>
+
+            <Divider borderColor={dividerColor} my={5} borderWidth="2px" />
+
+            {/* Onglets Adresses / Téléphones / Emails */}
+            <Tabs variant="enclosed" colorScheme="blue" size="lg">
+              <TabList>
+                <Tab fontSize="md">Adresses</Tab>
+                <Tab fontSize="md">Téléphones</Tab>
+                <Tab fontSize="md">Emails</Tab>
+              </TabList>
+
+              <TabPanels mt={2}>
+                {/* Adresses */}
+                <TabPanel>
+                 {(personneData.listeAdresse || []).length > 0 ? (
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={1}>
+                     {(personneData.listeAdresse || []).map((adresse, idx) => (
+                        <Box
+                          key={idx}
+                          p={6}
+                          borderWidth="2px"
+                          borderRadius="lg"
+                          borderColor={dividerColor}
+                          _hover={{ transform: 'scale(1.02)', transition: 'transform 0.2s' }}
+                        >
+                          <Flex justify="space-between" mb={1}>
+                            <Text fontSize="lg" fontWeight="bold">
+                              Adresse {idx + 1}
+                            </Text>
+                            {adresse.contactParDefaut && (
+                              <Tag colorScheme="blue" size="md">
+                                <TagLabel>Par défaut</TagLabel>
+                              </Tag>
+                            )}
+                          </Flex>
+                          <Stack spacing={3}>
+                            <InfoItem label="Numéro Rue" value={adresse.numRue} />
+                            <InfoItem label="Nom Rue" value={adresse.nomRue} />
+                            <InfoItem label="Code Postal" value={adresse.codePostal} />
+                            <InfoItem label="Délégation" value={adresse.delegation} />
+                          </Stack>
+                        </Box>
+                      ))}
+                    </SimpleGrid>
+                  ) : (
+                    <Text fontSize="lg" color="gray.500" mt={4}>
+                      Aucune adresse enregistrée
+                    </Text>
+                  )}
+                </TabPanel>
+
+                {/* Téléphones */}
+                <TabPanel>
+                  {(personneData.listeTelephone || []).length > 0 ? (
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={1}>
+                      {(personneData.listeTelephone || []).map((tel, idx) => (
+                        <Box
+                          key={idx}
+                          p={6}
+                          borderWidth="2px"
+                          borderRadius="lg"
+                          borderColor={dividerColor}
+                          _hover={{ transform: 'scale(1.02)', transition: 'transform 0.2s' }}
+                        >
+                          <Flex justify="space-between" mb={1}>
+                            <Text fontSize="lg" fontWeight="bold">
+                              Téléphone {idx + 1}
+                            </Text>
+                            {tel.contactParDefaut && (
+                              <Tag colorScheme="blue" size="md">
+                                <TagLabel>Par défaut</TagLabel>
+                              </Tag>
+                            )}
+                          </Flex>
+                          <Stack spacing={3}>
+                            <InfoItem label="Numéro" value={tel.numeroTelephone} />
+                            <InfoItem label="Type" value={tel.typeTelephone} />
+                          </Stack>
+                        </Box>
+                      ))}
+                    </SimpleGrid>
+                  ) : (
+                    <Text fontSize="lg" color="gray.500" mt={4}>
+                      Aucun téléphone enregistré
+                    </Text>
+                  )}
+                </TabPanel>
+
+                {/* Emails */}
+                <TabPanel>
+                 {(personneData.listeMails || []).length > 0 ? (
+                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={1}>
+                    {(personneData.listeMails || []).map((mail, idx) => (
+                        <Box
+                          key={idx}
+                          p={3}
+                          borderWidth="2px"
+                          borderRadius="lg"
+                          borderColor={dividerColor}
+                          _hover={{ transform: 'scale(1.02)', transition: 'transform 0.2s' }}
+                        >
+                          <Flex justify="space-between" mb={1}>
+                            <Text fontSize="lg" fontWeight="bold">
+                              Email {idx + 1}
+                            </Text>
+                            {mail.contactParDefaut && (
+                              <Tag colorScheme="blue" size="md">
+                                <TagLabel>Par défaut</TagLabel>
+                              </Tag>
+                            )}
+                          </Flex>
+                          <Stack spacing={1}>
+                            <InfoItem label="Adresse mail" value={mail.adresseMail} />
+                          </Stack>
+                        </Box>
+                      ))}
+                    </SimpleGrid>
+                  ) : (
+                    <Text fontSize="lg" color="gray.500" mt={4}>
+                      Aucun email enregistré
+                    </Text>
+                  )}
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </Box>
+        </Box>
+
+        {/* Footer */}
+        <Box borderTop="2px solid" borderColor={borderColor}>
+          <Footer />
+        </Box>
+
+        {/* Modal de confirmation de suppression */}
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
+          <ModalOverlay />
+          <ModalContent rounded="2xl" boxShadow="xl">
+            <ModalHeader>Confirmer la suppression</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Text fontSize="lg">
+                Êtes-vous sûr de vouloir supprimer{' '}
+                <Box as="span" fontWeight="bold">
+                  {personneData.nom} {personneData.prenom}
+                </Box>
+                ? Cette action est irréversible.
+              </Text>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onClose} isDisabled={isDeleting}>
+                Annuler
+              </Button>
+              <Button colorScheme="red" onClick={handleDelete} isLoading={isDeleting}>
+                Supprimer
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </Box>
+    </Flex>
   );
 };
+
+// Composant InfoItem réutilisable
+const InfoItem = ({ label, value }: { label: string; value?: string | number | boolean | null }) => (
+  <Box mb={4}>
+    <Text fontSize="md" color="gray.500" mb={2}>
+      {label}
+    </Text>
+    <Text fontSize="lg" fontWeight="medium">
+      {value?.toString() ?? '-'}
+    </Text>
+  </Box>
+);
 
 export default PersonneDetailPage;
