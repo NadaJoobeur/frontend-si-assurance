@@ -7,6 +7,11 @@ import PersonneAddPage from '../../modules/personne/pages/PersonneAddPage'
 import PersonneDetailPage from '../../modules/personne/pages/PersonneDetailPage'
 import PersonnesListPage from '../../modules/personne/pages/PersonnesListPage'
 import PersonneEditPage from '../../modules/personne/pages/PersonneEditPage'
+import CreateContratPage from '../../modules/contrat/pages/CreateContratPage'
+import ContratsPage from '../../modules/contrat/pages/ContratsPage'
+import ContratDetailPage from '../../modules/contrat/pages/ContratDetailPage'
+import ContratUpdatePage from '../../modules/contrat/pages/ContratUpdatePage'
+import  PacksPage from '../../modules/garantie/Pages/PacksPage'
 const router = createBrowserRouter([
   {
     path: '/login',
@@ -35,6 +40,25 @@ const router = createBrowserRouter([
 {
   path: '/person/edit/:numeroIdentification',
   element: <PersonneEditPage />,
+},
+{
+  path: '/contrat/add',
+  element: <CreateContratPage/>,
+},
+ { path: '/contrat/list',
+  element: < ContratsPage />,
+},
+   {
+  path: '/contrat/detail/:numeroContrat',
+  element: <ContratDetailPage />,
+},
+ {
+  path: '/contrat/edit/:numeroContrat',
+  element: <ContratUpdatePage />,
+},
+{
+  path: '/garantie',
+  element: <PacksPage />,
 },
 {
     path: '*', // mettre cette route en dernier

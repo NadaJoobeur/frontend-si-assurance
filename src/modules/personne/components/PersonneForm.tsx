@@ -4,61 +4,79 @@ import {
   FormControl,
   FormLabel,
   Input,
-  useColorModeValue,
+  Checkbox,
+  Grid,
   Heading,
-  SimpleGrid,
-  Switch,
-  Flex,
-  Collapse,
+  VStack,
+  HStack,
   IconButton,
-  useDisclosure,
-  Text,
-} from '@chakra-ui/react'
-import { useState } from 'react'
-import { ChevronDownIcon, ChevronUpIcon, AddIcon } from '@chakra-ui/icons'
-import type { Personne } from '../types/personne'
-
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  useToast,
+  Select,
+} from '@chakra-ui/react';
+import { ChevronLeftIcon, AddIcon } from '@chakra-ui/icons';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { Personne } from '../types/personne';
 
 interface PersonneFormProps {
   initialData?: Partial<Personne>;
   onSubmit: (data: Partial<Personne>) => void;
   isLoading: boolean;
-  title?: string; // Ajoutez cette ligne
+  title?: string;
 }
 
 const PersonneForm = ({ 
   initialData = {}, 
   onSubmit, 
   isLoading,
-  title = "Formulaire d'enregistrement" // Valeur par défaut
+  title = "Formulaire d'enregistrement"
 }: PersonneFormProps) => {
   const [formData, setFormData] = useState<Partial<Personne>>({
     ...initialData,
     listeAdresse: initialData.listeAdresse ?? [{ numRue: undefined, nomRue: '', codePostal: '', contactParDefaut: true }],
     listeTelephone: initialData.listeTelephone ?? [{ numeroTelephone: '', typeTelephone: '', contactParDefaut: true }],
     listeMails: initialData.listeMails ?? [{ adresseMail: '', contactParDefaut: true }],
-  })
+  });
 
-  const { isOpen: showAddress, onToggle: toggleAddress } = useDisclosure({ defaultIsOpen: true })
-  const { isOpen: showPhone, onToggle: togglePhone } = useDisclosure({ defaultIsOpen: false })
-  const { isOpen: showEmail, onToggle: toggleEmail } = useDisclosure({ defaultIsOpen: false })
+  const toast = useToast();
+  const navigate = useNavigate();
+  type InputField = Exclude<keyof Personne, 
+    'blackList' | 'listeAdresse' | 'listeTelephone' | 'listeMails'
+  >;
 
-const handleChange = (field: InputField) => (e: React.ChangeEvent<HTMLInputElement>) => {
-  const value = e.target.value
-  setFormData(prev => ({
-    ...prev,
-    [field]: field === 'dateDeNaissance' ? value : value
-  }))
-}
+  const handleChange = (field: InputField) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData(prev => ({
+      ...prev,
+      [field]: field === 'dateDeNaissance' ? value : value
+    }));
+  };
 
   const handleToggle = (field: keyof Personne) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, [field]: e.target.checked }))
-  }
+    setFormData(prev => ({ ...prev, [field]: e.target.checked }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit(formData)
-  }
+    e.preventDefault();
+    
+    if (!formData.nom || !formData.prenom) {
+      toast({
+        title: 'Champs requis manquants',
+        description: 'Veuillez remplir les champs obligatoires',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+    
+    onSubmit(formData);
+  };
 
   const handleReset = () => {
     setFormData({
@@ -66,222 +84,328 @@ const handleChange = (field: InputField) => (e: React.ChangeEvent<HTMLInputEleme
       listeAdresse: initialData.listeAdresse ?? [{ numRue: undefined, nomRue: '', codePostal: '', contactParDefaut: true }],
       listeTelephone: initialData.listeTelephone ?? [{ numeroTelephone: '', typeTelephone: '', contactParDefaut: true }],
       listeMails: initialData.listeMails ?? [{ adresseMail: '', contactParDefaut: true }],
-    })
-  }
-  type InputField = Exclude<keyof Personne, 
-  'blackList' | 'listeAdresse' | 'listeTelephone' | 'listeMails'
->
-
-  const inputBorderColor = useColorModeValue('gray.300', 'gray.600')
-  const inputFocusBorderColor = 'teal.400'
-  const placeholderColor = useColorModeValue('gray.500', 'gray.400')
-  const sectionBg = useColorModeValue('whiteAlpha.700', 'gray.700')
+    });
+  };
 
   return (
-    <Flex minH="100vh" align="center" justify="center" px={4} bg={useColorModeValue('gray.50', 'gray.800')}>
-      <Box 
-        as="form" 
-        onSubmit={handleSubmit} 
-        maxW="4xl" 
-        w="full" 
-        p={8}
-        border="1px solid"
-        borderColor="blue.300"
-        borderRadius="md"
-      >
-        <Heading size="lg" mb={6} textAlign="center" color={useColorModeValue('gray.800', 'white')}>
+    <Box p={6} borderWidth="1px" borderRadius="lg">
+      <Heading as="h2" size="lg" mb={6}>
+        <IconButton
+          aria-label="Retour"
+          icon={<ChevronLeftIcon />}
+          onClick={() => navigate(-1)}
+          mr={2}
+        />
         {title}
-        </Heading>
+      </Heading>
+      
+      <form onSubmit={handleSubmit}>
+        <Accordion defaultIndex={[0]} allowMultiple>
+          {/* Informations de base */}
+          <AccordionItem>
+            <h2>
+              <AccordionButton>
+                <Box as="span" flex='1' textAlign='left'>
+                  Informations personnelles
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>
+              <Grid templateColumns={["1fr", "repeat(2, 1fr)", "repeat(3, 1fr)"]} gap={6}>
+                <FormControl isRequired>
+                  <FormLabel>Nom</FormLabel>
+                  <Input
+                    placeholder="Nom"
+                    value={String(formData.nom ?? '')}
+                    onChange={handleChange('nom')}
+                  />
+                </FormControl>
+                
+                <FormControl isRequired>
+                  <FormLabel>Prénom</FormLabel>
+                  <Input
+                    placeholder="Prénom"
+                    value={String(formData.prenom ?? '')}
+                    onChange={handleChange('prenom')}
+                  />
+                </FormControl>
+                
+                <FormControl>
+                  <FormLabel>Raison Sociale</FormLabel>
+                  <Input
+                    placeholder="Raison Sociale"
+                    value={String(formData.raisonSociale ?? '')}
+                    onChange={handleChange('raisonSociale')}
+                  />
+                </FormControl>
+                
+                <FormControl>
+                  <FormLabel>Date de Naissance</FormLabel>
+                  <Input
+                    type="date"
+                    value={String(formData.dateDeNaissance ?? '')}
+                    onChange={handleChange('dateDeNaissance')}
+                  />
+                </FormControl>
+                
+                <FormControl>
+                  <FormLabel>Activité</FormLabel>
+                  <Input
+                    placeholder="Activité"
+                    value={String(formData.activite ?? '')}
+                    onChange={handleChange('activite')}
+                  />
+                </FormControl>
+              </Grid>
+            </AccordionPanel>
+          </AccordionItem>
 
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} mb={6}>
-     {[
-  { label: 'Nom', field: 'nom' as InputField },
-  { label: 'Prénom', field: 'prenom' as InputField },
-  { label: 'Raison Sociale', field: 'raisonSociale' as InputField },
-  { label: 'Date de Naissance', field: 'dateDeNaissance' as InputField, type: 'date' },
-  { label: 'Activité', field: 'activite' as InputField },
-].map(({ label, field, type }) => (
-  <FormControl key={field} isRequired={field !== 'raisonSociale'}>
-    <FormLabel>{label}</FormLabel>
-    <Input
-      type={type ?? 'text'}
-      placeholder={label}
-      value={String(formData[field] ?? '')}
-      onChange={handleChange(field)}
-      _placeholder={{ color: placeholderColor }}
-      borderColor={inputBorderColor}
-      focusBorderColor={inputFocusBorderColor}
-      rounded="md"
-    />
-  </FormControl>
-))}
-        </SimpleGrid>
+          {/* Adresses */}
+          <AccordionItem>
+            <h2>
+              <AccordionButton>
+                <Box as="span" flex='1' textAlign='left'>
+                  Adresses
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>
+              <VStack spacing={4} align="stretch">
+                {formData.listeAdresse?.map((adresse, index) => (
+                  <Box key={index} p={4} borderWidth="1px" borderRadius="md">
+                    <Heading as="h4" size="sm" mb={4}>Adresse #{index + 1}</Heading>
+                    <Grid templateColumns={["1fr", "repeat(2, 1fr)", "repeat(3, 1fr)"]} gap={4}>
+                      <FormControl>
+                        <FormLabel>Numéro</FormLabel>
+                        <Input
+                          type="number"
+                          placeholder="Numéro"
+                          value={adresse.numRue ?? ''}
+                          onChange={(e) => {
+                            const updated = [...(formData.listeAdresse ?? [])];
+                            updated[index].numRue = parseInt(e.target.value) || 0;
+                            setFormData(prev => ({ ...prev, listeAdresse: updated }));
+                          }}
+                        />
+                      </FormControl>
+                      
+                      <FormControl>
+                        <FormLabel>Rue</FormLabel>
+                        <Input
+                          placeholder="Rue"
+                          value={adresse.nomRue ?? ''}
+                          onChange={(e) => {
+                            const updated = [...(formData.listeAdresse ?? [])];
+                            updated[index].nomRue = e.target.value;
+                            setFormData(prev => ({ ...prev, listeAdresse: updated }));
+                          }}
+                        />
+                      </FormControl>
+                      
+                      <FormControl>
+                        <FormLabel>Code Postal</FormLabel>
+                        <Input
+                          placeholder="Code Postal"
+                          value={adresse.codePostal ?? ''}
+                          onChange={(e) => {
+                            const updated = [...(formData.listeAdresse ?? [])];
+                            updated[index].codePostal = e.target.value;
+                            setFormData(prev => ({ ...prev, listeAdresse: updated }));
+                          }}
+                        />
+                      </FormControl>
+                    </Grid>
+                    
+                    <Checkbox 
+                      mt={4}
+                      isChecked={adresse.contactParDefaut}
+                      onChange={(e) => {
+                        const updated = [...(formData.listeAdresse ?? [])];
+                        updated[index].contactParDefaut = e.target.checked;
+                        setFormData(prev => ({ ...prev, listeAdresse: updated }));
+                      }}
+                    >
+                      Contact par défaut
+                    </Checkbox>
+                  </Box>
+                ))}
+                
+                <Button 
+                  leftIcon={<AddIcon />} 
+                  onClick={() =>
+                    setFormData(prev => ({
+                      ...prev,
+                      listeAdresse: [...(prev.listeAdresse ?? []), { contactParDefaut: false }]
+                    }))}
+                >
+                  Ajouter une adresse
+                </Button>
+              </VStack>
+            </AccordionPanel>
+          </AccordionItem>
 
-        {/* Adresses */}
-        <Section title="Adresses" show={showAddress} toggle={toggleAddress}>
-          {formData.listeAdresse?.map((adresse, index) => (
-            <SimpleGrid key={index} columns={{ base: 1, md: 3 }} spacing={4} mb={4}>
-              <FormControl>
-                <FormLabel>Numéro</FormLabel>
-                <Input
-                  type="number"
-                  placeholder="Numéro"
-                  value={adresse.numRue ?? ''}
-                  onChange={(e) => {
-                    const updated = [...(formData.listeAdresse ?? [])]
-                    updated[index].numRue = parseInt(e.target.value) || 0
-                    setFormData(prev => ({ ...prev, listeAdresse: updated }))
-                  }}
-                  _placeholder={{ color: placeholderColor }}
-                  borderColor={inputBorderColor}
-                  focusBorderColor={inputFocusBorderColor}
-                  rounded="md"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Rue</FormLabel>
-                <Input
-                  placeholder="Rue"
-                  value={adresse.nomRue ?? ''}
-                  onChange={(e) => {
-                    const updated = [...(formData.listeAdresse ?? [])]
-                    updated[index].nomRue = e.target.value
-                    setFormData(prev => ({ ...prev, listeAdresse: updated }))
-                  }}
-                  _placeholder={{ color: placeholderColor }}
-                  borderColor={inputBorderColor}
-                  focusBorderColor={inputFocusBorderColor}
-                  rounded="md"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Code Postal</FormLabel>
-                <Input
-                  placeholder="Code Postal"
-                  value={adresse.codePostal ?? ''}
-                  onChange={(e) => {
-                    const updated = [...(formData.listeAdresse ?? [])]
-                    updated[index].codePostal = e.target.value
-                    setFormData(prev => ({ ...prev, listeAdresse: updated }))
-                  }}
-                  _placeholder={{ color: placeholderColor }}
-                  borderColor={inputBorderColor}
-                  focusBorderColor={inputFocusBorderColor}
-                  rounded="md"
-                />
-              </FormControl>
-            </SimpleGrid>
-          ))}
-          <Button size="sm" variant="outline" leftIcon={<AddIcon />} onClick={() =>
-            setFormData(prev => ({
-              ...prev,
-              listeAdresse: [...(prev.listeAdresse ?? []), { contactParDefaut: false }]
-            }))}>
-            Ajouter une adresse
-          </Button>
-        </Section>
+          {/* Téléphones */}
+          <AccordionItem>
+            <h2>
+              <AccordionButton>
+                <Box as="span" flex='1' textAlign='left'>
+                  Téléphones
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>
+              <VStack spacing={4} align="stretch">
+                {formData.listeTelephone?.map((tel, index) => (
+                  <Box key={index} p={4} borderWidth="1px" borderRadius="md">
+                    <Heading as="h4" size="sm" mb={4}>Téléphone #{index + 1}</Heading>
+                    <Grid templateColumns={["1fr", "repeat(2, 1fr)"]} gap={4}>
+                      <FormControl>
+                        <FormLabel>Numéro</FormLabel>
+                        <Input
+                          placeholder="Numéro"
+                          value={tel.numeroTelephone ?? ''}
+                          onChange={(e) => {
+                            const updated = [...(formData.listeTelephone ?? [])];
+                            updated[index].numeroTelephone = e.target.value;
+                            setFormData(prev => ({ ...prev, listeTelephone: updated }));
+                          }}
+                        />
+                      </FormControl>
+                      
+                      <FormControl>
+                        <FormLabel>Type</FormLabel>
+                        <Select
+                          value={tel.typeTelephone ?? ''}
+                          onChange={(e) => {
+                            const updated = [...(formData.listeTelephone ?? [])];
+                            updated[index].typeTelephone = e.target.value;
+                            setFormData(prev => ({ ...prev, listeTelephone: updated }));
+                          }}
+                        >
+                          <option value="MOBILE">Mobile</option>
+                          <option value="FIXE">Fixe</option>
+                          <option value="PROFESSIONNEL">Professionnel</option>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    
+                    <Checkbox 
+                      mt={4}
+                      isChecked={tel.contactParDefaut}
+                      onChange={(e) => {
+                        const updated = [...(formData.listeTelephone ?? [])];
+                        updated[index].contactParDefaut = e.target.checked;
+                        setFormData(prev => ({ ...prev, listeTelephone: updated }));
+                      }}
+                    >
+                      Contact par défaut
+                    </Checkbox>
+                  </Box>
+                ))}
+                
+                <Button 
+                  leftIcon={<AddIcon />} 
+                  onClick={() =>
+                    setFormData(prev => ({
+                      ...prev,
+                      listeTelephone: [...(prev.listeTelephone ?? []), { contactParDefaut: false }]
+                    }))}
+                >
+                  Ajouter un téléphone
+                </Button>
+              </VStack>
+            </AccordionPanel>
+          </AccordionItem>
 
-        {/* Téléphones */}
-        <Section title="Téléphones" show={showPhone} toggle={togglePhone}>
-          {formData.listeTelephone?.map((tel, index) => (
-            <FormControl key={index} mb={4}>
-              <FormLabel>Numéro</FormLabel>
-              <Input
-                placeholder="Numéro"
-                value={tel.numeroTelephone ?? ''}
-                onChange={(e) => {
-                  const updated = [...(formData.listeTelephone ?? [])]
-                  updated[index].numeroTelephone = e.target.value
-                  setFormData(prev => ({ ...prev, listeTelephone: updated }))
-                }}
-                _placeholder={{ color: placeholderColor }}
-                borderColor={inputBorderColor}
-                focusBorderColor={inputFocusBorderColor}
-                rounded="md"
-              />
-            </FormControl>
-          ))}
-          <Button size="sm" variant="outline" leftIcon={<AddIcon />} onClick={() =>
-            setFormData(prev => ({
-              ...prev,
-              listeTelephone: [...(prev.listeTelephone ?? []), { contactParDefaut: false }]
-            }))}>
-            Ajouter un téléphone
-          </Button>
-        </Section>
-
-        {/* Emails */}
-        <Section title="Emails" show={showEmail} toggle={toggleEmail}>
-          {formData.listeMails?.map((mail, index) => (
-            <FormControl key={index} mb={4}>
-              <FormLabel>Email</FormLabel>
-              <Input
-                placeholder="Email"
-                type="email"
-                value={mail.adresseMail ?? ''}
-                onChange={(e) => {
-                  const updated = [...(formData.listeMails ?? [])]
-                  updated[index].adresseMail = e.target.value
-                  setFormData(prev => ({ ...prev, listeMails: updated }))
-                }}
-                _placeholder={{ color: placeholderColor }}
-                borderColor={inputBorderColor}
-                focusBorderColor={inputFocusBorderColor}
-                rounded="md"
-              />
-            </FormControl>
-          ))}
-          <Button size="sm" variant="outline" leftIcon={<AddIcon />} onClick={() =>
-            setFormData(prev => ({
-              ...prev,
-              listeMails: [...(prev.listeMails ?? []), { contactParDefaut: false }]
-            }))}>
-            Ajouter un email
-          </Button>
-        </Section>
+          {/* Emails */}
+          <AccordionItem>
+            <h2>
+              <AccordionButton>
+                <Box as="span" flex='1' textAlign='left'>
+                  Emails
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>
+              <VStack spacing={4} align="stretch">
+                {formData.listeMails?.map((mail, index) => (
+                  <Box key={index} p={4} borderWidth="1px" borderRadius="md">
+                    <Heading as="h4" size="sm" mb={4}>Email #{index + 1}</Heading>
+                    <FormControl>
+                      <FormLabel>Adresse Email</FormLabel>
+                      <Input
+                        type="email"
+                        placeholder="Email"
+                        value={mail.adresseMail ?? ''}
+                        onChange={(e) => {
+                          const updated = [...(formData.listeMails ?? [])];
+                          updated[index].adresseMail = e.target.value;
+                          setFormData(prev => ({ ...prev, listeMails: updated }));
+                        }}
+                      />
+                    </FormControl>
+                    
+                    <Checkbox 
+                      mt={4}
+                      isChecked={mail.contactParDefaut}
+                      onChange={(e) => {
+                        const updated = [...(formData.listeMails ?? [])];
+                        updated[index].contactParDefaut = e.target.checked;
+                        setFormData(prev => ({ ...prev, listeMails: updated }));
+                      }}
+                    >
+                      Contact par défaut
+                    </Checkbox>
+                  </Box>
+                ))}
+                
+                <Button 
+                  leftIcon={<AddIcon />} 
+                  onClick={() =>
+                    setFormData(prev => ({
+                      ...prev,
+                      listeMails: [...(prev.listeMails ?? []), { contactParDefaut: false }]
+                    }))}
+                >
+                  Ajouter un email
+                </Button>
+              </VStack>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
 
         {/* Blacklist */}
-        <Flex align="center" justify="space-between" mt={6} bg={sectionBg} p={4} rounded="md">
-          <Box>
-            <Text fontWeight="bold">Statut blacklist</Text>
-            <Text fontSize="sm" color={placeholderColor}>Marquer cette personne comme indésirable</Text>
-          </Box>
-          <Switch
-            isChecked={Boolean(formData.blackList)}
-            onChange={handleToggle('blackList')}
-            colorScheme="red"
-            size="lg"
-          />
-        </Flex>
+        <Box mt={6} p={4} borderWidth="1px" borderRadius="md">
+          <HStack justify="space-between">
+            <Box>
+              <Heading as="h4" size="sm">Statut blacklist</Heading>
+              <Box fontSize="sm" color="gray.500">Marquer cette personne comme indésirable</Box>
+            </Box>
+            <Checkbox 
+              colorScheme="red"
+              size="lg"
+              isChecked={Boolean(formData.blackList)}
+              onChange={handleToggle('blackList')}
+            >
+              Blacklisté
+            </Checkbox>
+          </HStack>
+        </Box>
 
         {/* Actions */}
-        <Flex justify="flex-end" gap={4} mt={8}>
+        <HStack justify="flex-end" mt={8} spacing={4}>
           <Button variant="outline" onClick={handleReset}>Réinitialiser</Button>
-          <Button colorScheme="teal" type="submit" isLoading={isLoading} loadingText="Enregistrement...">Sauvegarder</Button>
-        </Flex>
-      </Box>
-    </Flex>
-  )
-}
-
-// Petite section réutilisable
-const Section = ({ title, show, toggle, children }: { title: string, show: boolean, toggle: () => void, children: React.ReactNode }) => {
-  return (
-    <Box mt={4}>
-      <Flex justify="space-between" align="center" onClick={toggle} cursor="pointer" mb={2}>
-        <Heading size="sm">{title}</Heading>
-        <IconButton
-          aria-label={show ? `Cacher ${title}` : `Afficher ${title}`}
-          icon={show ? <ChevronUpIcon /> : <ChevronDownIcon />}
-          size="sm"
-          variant="ghost"
-        />
-      </Flex>
-      <Collapse in={show}>
-        <Box>{children}</Box>
-      </Collapse>
+          <Button colorScheme="blue" type="submit" isLoading={isLoading}>
+            Sauvegarder
+          </Button>
+        </HStack>
+      </form>
     </Box>
-  )
-}
+  );
+};
 
-export default PersonneForm
+export default PersonneForm;

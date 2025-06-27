@@ -1,7 +1,6 @@
 import {
   Box,
   Heading,
- 
   useColorModeValue,
   Button,
   Text,
@@ -15,7 +14,7 @@ import {
   Tooltip,
   SimpleGrid,
 } from '@chakra-ui/react'
-import { AddIcon, SearchIcon } from '@chakra-ui/icons'
+import { AddIcon, SearchIcon, CloseIcon } from '@chakra-ui/icons'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePersonnes } from '../hooks/usePersonnes'
@@ -38,15 +37,13 @@ const PersonnesListPage = () => {
 
   const { data = [], isLoading } = usePersonnes(idUser)
   const [searchName, setSearchName] = useState('')
-  const [searchId, setSearchId] = useState('')
-  const [numeroIdentification, setNumeroIdentification] = useState<string | undefined>(undefined)
+  const [numeroIdentification] = useState<string | undefined>(undefined)
 
   const toast = useToast()
   const { mutate: deletePersonne } = useDeletePersonne()
 
   const {
     data: isBlacklisted,
-    isLoading: isCheckingBlacklist,
     error: blacklistError,
   } = useCheckBlacklist(numeroIdentification)
 
@@ -90,20 +87,6 @@ const PersonnesListPage = () => {
     }
   }
 
-  const handleCheckBlacklist = () => {
-    if (!searchId.trim()) {
-      toast({
-        title: "ID requis",
-        description: "Veuillez entrer un ID pour vérifier la blacklist.",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      })
-      return
-    }
-    setNumeroIdentification(searchId.trim())
-  }
-
   useEffect(() => {
     if (numeroIdentification !== undefined) {
       if (blacklistError) {
@@ -125,6 +108,11 @@ const PersonnesListPage = () => {
     }
   }, [isBlacklisted, blacklistError, numeroIdentification, toast])
 
+  // Couleurs en fonction du mode
+  const inputBg = useColorModeValue('white', 'gray.800')
+  const inputColor = useColorModeValue('gray.800', 'white')
+  const placeholderColor = useColorModeValue('gray.500', 'gray.400')
+
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')} display="flex">
       <Box w="260px" flexShrink={0}>
@@ -143,62 +131,70 @@ const PersonnesListPage = () => {
             Liste des personnes
           </Heading>
 
-          <Flex
-            direction={{ base: 'column', md: 'row' }}
-            align="center"
-            justify="center"
-            gap={4}
-            mb={8}
-            flexWrap="wrap"
-          >
-            <InputGroup maxW="400px" w="full">
+          <Flex justify="center" mb={8} position="relative">
+            <InputGroup maxW="600px">
               <Input
-                placeholder="Entrez le nom"
+                placeholder="Rechercher une personne par nom..."
                 value={searchName}
                 onChange={(e) => setSearchName(e.target.value)}
                 borderRadius="full"
                 size="lg"
-                bg={useColorModeValue('white', 'gray.800')}
-                color={useColorModeValue('gray.800', 'white')}
-                _placeholder={{ color: 'gray.500' }}
-                shadow="sm"
+                bg={inputBg}
+                color={inputColor}
+                _placeholder={{ 
+                  color: placeholderColor,
+                  fontSize: { base: 'sm', md: 'md' }
+                }}
+                shadow="md"
+                pr="4.5rem"
+                _focus={{
+                  borderColor: 'blue.500',
+                  boxShadow: '0 0 0 1px rgba(66, 153, 225, 0.6)'
+                }}
+                transition="all 0.2s ease"
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
-              <InputRightElement width="4.5rem">
+              
+              {/* Bouton de recherche */}
+              <InputRightElement width="4.5rem" h="full">
                 <IconButton
-                  aria-label="Chercher"
+                  aria-label="Rechercher"
                   icon={<SearchIcon />}
-                  colorScheme="teal"
-                  size="sm"
+                  size="lg"
+                  h="full"
+                  w="full"
+                  borderTopRightRadius="full"
+                  borderBottomRightRadius="full"
+                  colorScheme="blue"
+                  _hover={{ 
+                    bg: 'blue.600',
+                    transform: 'scale(1.02)'
+                  }}
+                  _active={{
+                    bg: 'blue.700',
+                    transform: 'scale(0.98)'
+                  }}
                   onClick={handleSearch}
-                  rounded="full"
                 />
               </InputRightElement>
-            </InputGroup>
 
-            <InputGroup maxW="400px" w="full">
-              <Input
-                placeholder="Entrez l'ID pour blacklist"
-                value={searchId}
-                onChange={(e) => setSearchId(e.target.value)}
-                borderRadius="full"
-                size="lg"
-                bg={useColorModeValue('white', 'gray.800')}
-                color={useColorModeValue('gray.800', 'white')}
-                _placeholder={{ color: 'gray.500' }}
-                shadow="sm"
-              />
-              <Button
-                onClick={handleCheckBlacklist}
-                colorScheme="red"
-                size="lg"
-                isLoading={isCheckingBlacklist}
-                loadingText="Vérification..."
-                borderRadius="full"
-                px={6}
-                ml={2}
-              >
-                Black list
-              </Button>
+              {/* Bouton de reset */}
+              {searchName && (
+                <IconButton
+                  aria-label="Effacer la recherche"
+                  icon={<CloseIcon boxSize={3} />}
+                  position="absolute"
+                  right="4.5rem"
+                  top="50%"
+                  transform="translateY(-50%)"
+                  size="sm"
+                  rounded="full"
+                  colorScheme="gray"
+                  variant="ghost"
+                  onClick={() => setSearchName('')}
+                  zIndex="1"
+                />
+              )}
             </InputGroup>
           </Flex>
 
@@ -231,24 +227,25 @@ const PersonnesListPage = () => {
         <Box borderTop="1px solid" borderColor={useColorModeValue('gray.200', 'gray.700')}>
           <Footer />
         </Box>
-      </Flex>
 
-      <Tooltip label="Ajouter une personne" placement="left" hasArrow>
-        <Button
-          onClick={() => navigate('/person/add')}
-          colorScheme="green"
-          size="lg"
-          rounded="full"
-          shadow="xl"
-          position="fixed"
-          bottom="40px"
-          right="40px"
-          leftIcon={<AddIcon />}
-          _hover={{ transform: 'scale(1.1)' }}
-        >
-          Ajouter
-        </Button>
-      </Tooltip>
+        <Tooltip label="Ajouter une personne" placement="left" hasArrow>
+          <Button
+            onClick={() => navigate('/person/add')}
+            colorScheme="green"
+            size="lg"
+            rounded="full"
+            shadow="xl"
+            position="fixed"
+            bottom="40px"
+            right="40px"
+            leftIcon={<AddIcon />}
+            _hover={{ transform: 'scale(1.1)' }}
+            zIndex={1000}
+          >
+            Ajouter
+          </Button>
+        </Tooltip>
+      </Flex>
     </Box>
   )
 }
