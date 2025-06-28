@@ -36,12 +36,13 @@ const PersonneForm = ({
   isLoading,
   title = "Formulaire d'enregistrement"
 }: PersonneFormProps) => {
-  const [formData, setFormData] = useState<Partial<Personne>>({
-    ...initialData,
-    listeAdresse: initialData.listeAdresse ?? [{ numRue: undefined, nomRue: '', codePostal: '', contactParDefaut: true }],
-    listeTelephone: initialData.listeTelephone ?? [{ numeroTelephone: '', typeTelephone: '', contactParDefaut: true }],
-    listeMails: initialData.listeMails ?? [{ adresseMail: '', contactParDefaut: true }],
-  });
+const [formData, setFormData] = useState<Partial<Personne>>({
+  ...initialData,
+  blackList: initialData.blackList ?? false, 
+  listeAdresse: initialData.listeAdresse ?? [{ numRue: undefined, nomRue: '', codePostal: '', contactParDefaut: true }],
+  listeTelephone: initialData.listeTelephone ?? [{ numeroTelephone: '', typeTelephone: '', contactParDefaut: true }],
+  listeMails: initialData.listeMails ?? [{ adresseMail: '', contactParDefaut: true }],
+});
 
   const toast = useToast();
   const navigate = useNavigate();

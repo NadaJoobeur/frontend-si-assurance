@@ -22,6 +22,7 @@ const PersonneEditPage = () => {
   const updateMutation = useUpdatePersonne()
 
   const handleSubmit = (formData: Partial<Personne>) => {
+    console.log('🔍 Données envoyées :', formData) 
     updateMutation.mutate(
       { numeroIdentification: numeroIdentification!, data: formData },
       { onSuccess: () => navigate('/person/list') }
