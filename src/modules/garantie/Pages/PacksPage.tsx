@@ -26,55 +26,8 @@ import {
 import { SearchIcon ,CloseIcon} from '@chakra-ui/icons';
 import Sidebar from '../../../shared/components/Sidebar';
 import Footer from '../../../shared/components/Footer';
+import { packs, garantiesOptionnelles } from '../../../shared/utils/packs';
 
-const packs = [
-  {
-    code: 'RC',
-    name: 'Pack RC',
-    description: 'Le pack minimum légal couvrant la responsabilité civile du conducteur.',
-    garanties: [
-      { libelle: 'Responsabilité Civile', capital: 'Illimité', franchise: '0 TND', code: 'RC' },
-      { libelle: 'Défense et recours', capital: '5 000 TND', franchise: '0 TND', code: 'DEFREC' },
-      { libelle: 'Protection juridique de base', capital: '3 000 TND', franchise: '0 TND', code: 'JURIDBASE' },
-    ]
-  },
-  {
-    code: 'SECURITE',
-    name: 'Pack Sécurité',
-    description: 'Un niveau intermédiaire ajoutant des garanties importantes au pack RC.',
-    garanties: [
-      { libelle: 'Incendie', capital: '10 000 TND', franchise: '500 TND', code: 'INCENDIE' },
-      { libelle: 'Vol', capital: '15 000 TND', franchise: '600 TND', code: 'VOL' },
-      { libelle: 'Bris de glace', capital: '2 000 TND', franchise: '100 TND', code: 'BRISGLACE' },
-      { libelle: 'Événements climatiques', capital: '10 000 TND', franchise: '800 TND', code: 'CLIMAT' },
-      { libelle: 'Assistance standard', capital: '5 000 TND', franchise: '0 TND', code: 'ASSISTSTD' },
-    ]
-  },
-  {
-    code: 'SERENITE',
-    name: 'Pack Sérénité',
-    description: 'Le pack tous risques offrant la protection la plus complète.',
-    garanties: [
-      { libelle: 'Dommages tous accidents', capital: '30 000 TND', franchise: '1 500 TND', code: 'ACCIDENTS' },
-      { libelle: 'Vandalisme', capital: '5 000 TND', franchise: '400 TND', code: 'VANDAL' },
-      { libelle: 'Collision étendue', capital: '25 000 TND', franchise: '1 000 TND', code: 'COLLISION' },
-      { libelle: 'Conducteur de base', capital: '10 000 TND', franchise: '200 TND', code: 'COND_BASE' },
-    ]
-  },
-];
-
-const garantiesOptionnelles = [
-  { libelle: 'Véhicule de remplacement', capital: '1 500 TND', franchise: '150 TND', code: 'VREMP' },
-  { libelle: 'Garantie conducteur étendue', capital: '25 000 TND', franchise: '300 TND', code: 'CONDPLUS' },
-  { libelle: 'Assistance 0 km étendue', capital: '8 000 TND', franchise: '0 TND', code: 'ASSISTPLUS' },
-  { libelle: 'Vol partiel', capital: '5 000 TND', franchise: '300 TND', code: 'VOLPART' },
-  { libelle: 'Dommages électriques', capital: '4 000 TND', franchise: '250 TND', code: 'ELECTRIQUE' },
-  { libelle: "Accessoires non d'origine", capital: '2 500 TND', franchise: '200 TND', code: 'ACCNDOR' },
-  { libelle: 'Bris de glace étendu', capital: '3 000 TND', franchise: '150 TND', code: 'BRGL_EXT' },
-  { libelle: 'Catastrophes naturelles +', capital: '20 000 TND', franchise: '1 000 TND', code: 'CATPLUS' },
-  { libelle: 'Protection juridique renforcée', capital: '10 000 TND', franchise: '0 TND', code: 'JURIDPLUS' },
-  { libelle: 'Contenu du véhicule', capital: '2 000 TND', franchise: '250 TND', code: 'CONTENU' },
-];
 
 const PacksPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
