@@ -25,7 +25,8 @@ const PersonneEditPage = () => {
     console.log('🔍 Données envoyées :', formData) 
     updateMutation.mutate(
       { numeroIdentification: numeroIdentification!, data: formData },
-      { onSuccess: () => navigate('/person/list') }
+      { onSuccess: () => navigate(`/person/detail/${numeroIdentification}`) }
+
     )
   }
 
@@ -48,7 +49,7 @@ const PersonneEditPage = () => {
   initialData={data}
   onSubmit={handleSubmit}
   isLoading={updateMutation.isPending}
-  title="Modification d'une personne" // Ajoutez cette ligne
+  title="Modification d'une personne"
 />
           ) : (
             <Box color={textColor} textAlign="center" mt={10}>

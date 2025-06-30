@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -39,6 +39,8 @@ import type {
   ProfilVehiculeData
 } from '../types/Contrat';
 import { packs, garantiesOptionnelles } from '../../../shared/utils/packs';
+import { getAgences } from '../../agence/api/AgenceApi'; // adapte le chemin selon ta structure
+import type { Agence } from '../../agence/types/Agence';
 
 interface LabeledInputProps {
   label: string;
@@ -111,9 +113,6 @@ const LabeledInput: React.FC<LabeledInputProps> = ({
     />
   </FormControl>
 );
-
-
-
 
 export const ContratForm: React.FC<ContratFormProps> = ({
   initialData,
@@ -198,6 +197,28 @@ const handleReset = () => {
   setGaranties(initialData?.garanties ?? [{ ...initialGarantieData }]);
   setProfilVehicule(initialData?.profilVehicule ?? initialVehiculeData);
 };
+const [agences, setAgences] = useState<Agence[]>([]);
+
+useEffect(() => {
+  const fetchAgences = async () => {
+    try {
+      const data = await getAgences();
+      setAgences(data);
+    } catch (error) {
+      console.error('Erreur lors du chargement des agences', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de charger la liste des agences.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  fetchAgences();
+}, []);
+
   return (
     <Box p={6} borderWidth="1px" borderRadius="lg">
       <Heading as="h2" size="lg" mb={6}>
@@ -215,8 +236,8 @@ const handleReset = () => {
           <AccordionItem>
             <h2>
               <AccordionButton>
-                <Box as="span" flex='1' textAlign='left'>
-                  Contrat
+               <Box as="span" flex="1" textAlign="left" fontWeight="bold">
+                    Contrat
                 </Box>
                 <AccordionIcon />
               </AccordionButton>
@@ -231,8 +252,29 @@ const handleReset = () => {
                 <LabeledInput label="Immatriculation" name="immatriculation" value={contrat.immatriculation} onChange={handleContratChange} />
                 <LabeledInput label="Prime Annuelle" name="primeAnnuelle" value={contrat.primeAnnuelle} onChange={handleContratChange} />
                 <LabeledInput label="Échéance" name="echeanceContractuelle" value={contrat.echeanceContractuelle} onChange={handleContratChange} />
-                <LabeledInput label="Code Agence" name="codeAgence" value={contrat.codeAgence} onChange={handleContratChange} />
-                <LabeledInput label="Libellé Agence" name="libelleAgence" value={contrat.libelleAgence} onChange={handleContratChange} />
+                <FormControl >
+                <FormLabel>Agence</FormLabel>
+                        <Select
+                                placeholder="Sélectionner une agence"
+                                value={contrat.codeAgence}
+                                onChange={(e) => {
+                                  const selectedCode = e.target.value;
+                                  const selectedAgence = agences.find(a => a.code_agence === selectedCode);
+
+                                  setContrat(prev => ({
+                                    ...prev,
+                                    codeAgence: selectedCode,
+                                    libelleAgence: selectedAgence?.nom_agence || '',
+                                  }));
+                                }}
+                              >
+                                {agences.map((agence) => (
+                                  <option key={agence.code_agence} value={agence.code_agence}>
+                                    {agence.nom_agence} ({agence.code_agence})
+                                  </option>
+                                ))}
+                      </Select>
+                  </FormControl>
                 <LabeledInput label="Date Expiration" name="dateExpiration" value={contrat.dateExpiration} onChange={handleContratChange} type="date" />
                 <LabeledInput label="Date Effet" name="dateEffet" value={contrat.dateEffet} onChange={handleContratChange} type="date" />
               </Grid>
@@ -266,7 +308,7 @@ const handleReset = () => {
          <AccordionItem>
   <h2>
     <AccordionButton>
-      <Box as="span" flex="1" textAlign="left">Garanties</Box>
+      <Box as="span" flex="1" textAlign="left" fontWeight="bold">Garanties</Box>
       <AccordionIcon />
     </AccordionButton>
   </h2>
@@ -338,7 +380,7 @@ const handleReset = () => {
         <AccordionItem>
             <h2>
                 <AccordionButton>
-                <Box as="span" flex='1' textAlign='left'>
+                <Box as="span" flex='1' textAlign='left' fontWeight="bold">
                     Véhicule
                 </Box>
                 <AccordionIcon />
