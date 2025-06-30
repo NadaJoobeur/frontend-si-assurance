@@ -1,15 +1,22 @@
-import { useState, useEffect } from 'react';
-import { getClientContrat } from '../api/personneAPI'; // Adaptez le chemin d'import
+import { useState, useEffect, useMemo } from 'react';
+import { getClientContrat } from '../api/personneAPI';
 import type { ContratFormData } from '../../contrat/types/Contrat'
 
+interface Filters {
+  etatContrat: string;
+  echeance?: string;
+}
 
 export const useContratsClient = (
   numeroIdentification: string,
-  filters = { etatContrat: 'ACTIF' }
+  filters: Filters = { etatContrat: 'ACTIF' }
 ) => {
   const [contrats, setContrats] = useState<ContratFormData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<{ message: string; details?: any } | null>(null);
+  const [error, setError] = useState<{ message: string; details?: string } | null>(null);
+
+  // On mémorise les filtres pour éviter les boucles infinies
+  const memoFilters = useMemo(() => filters, [filters.etatContrat, filters.echeance]);
 
   useEffect(() => {
     const fetchContrats = async () => {
@@ -22,12 +29,13 @@ export const useContratsClient = (
         setLoading(true);
         setError(null);
         
-        const data = await getClientContrat(numeroIdentification, filters);
+        const data = await getClientContrat(numeroIdentification, memoFilters);
         setContrats(data);
       } catch (err) {
+        const error = err as Error & { response?: { data?: { message?: string } } };
         setError({
           message: 'Échec du chargement des contrats',
-          details: err.response?.data?.message || err.message
+          details: error.response?.data?.message || error.message
         });
       } finally {
         setLoading(false);
@@ -35,18 +43,19 @@ export const useContratsClient = (
     };
 
     fetchContrats();
-  }, [numeroIdentification, filters.etatContrat, filters.echeance]);
+  }, [numeroIdentification, memoFilters]); // Utilise les filtres mémorisés
 
-  const refetch = async (newFilters = filters) => {
+  const refetch = async (newFilters: Filters = memoFilters) => {
     try {
       setLoading(true);
       const data = await getClientContrat(numeroIdentification, newFilters);
       setContrats(data);
       setError(null);
     } catch (err) {
+      const error = err as Error & { response?: { data?: { message?: string } } };
       setError({
         message: 'Échec du rechargement des contrats',
-        details: err.response?.data?.message || err.message
+        details: error.response?.data?.message || error.message
       });
     } finally {
       setLoading(false);

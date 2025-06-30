@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -29,14 +29,18 @@ import {
   AccordionIcon,
 } from '@chakra-ui/react';
 import {
-  ChevronLeftIcon,AddIcon
+  ChevronLeftIcon
 } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
 import type {
   ContratFormData,
   GarantieContratData,
+  PackData,
   ProfilVehiculeData
 } from '../types/Contrat';
+import { packs, garantiesOptionnelles } from '../../../shared/utils/packs';
+import { getAgences } from '../../agence/api/AgenceApi'; // adapte le chemin selon ta structure
+import type { Agence } from '../../agence/types/Agence';
 
 interface LabeledInputProps {
   label: string;
@@ -80,11 +84,12 @@ interface ContratFormProps {
     garanties?: GarantieContratData[];
     profilVehicule?: ProfilVehiculeData;
   };
-  onSubmit: (data: {
-    contrat: ContratFormData;
-    garanties: GarantieContratData[];
-    profilVehicule: ProfilVehiculeData;
-  }) => void;
+onSubmit: (data: {
+  contrat: ContratFormData;
+  garanties: GarantieContratData[];
+  profilVehicule: ProfilVehiculeData;
+  pack: PackData; // ou le type exact de ton pack
+ }) => void;
   isLoading?: boolean;
   title?: string;
   isUpdate?: boolean;
@@ -109,8 +114,6 @@ const LabeledInput: React.FC<LabeledInputProps> = ({
   </FormControl>
 );
 
-
-
 export const ContratForm: React.FC<ContratFormProps> = ({
   initialData,
   onSubmit,
@@ -127,6 +130,7 @@ export const ContratForm: React.FC<ContratFormProps> = ({
   const [profilVehicule, setProfilVehicule] = useState<ProfilVehiculeData>(
     initialData?.profilVehicule ?? initialVehiculeData
   );
+const [selectedPackCode, setSelectedPackCode] = useState<string>('');
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -138,57 +142,83 @@ const handleContratChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectE
   setContrat(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
 };
 
-  const handleGarantieChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    const newGaranties = [...garanties];
-    newGaranties[index] = {
-      ...newGaranties[index],
-      [name]: name === 'rangAffichage' ? parseInt(value) || 0 : value,
-    };
-    setGaranties(newGaranties);
-  };
-
-  const handleVehiculeChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+const handleVehiculeChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setProfilVehicule(prev => ({ ...prev, [name]: value }));
   };
 
-  const addGarantie = () => setGaranties([...garanties, { ...initialGarantieData }]);
 
-  const removeGarantie = (index: number) => {
-    if (garanties.length > 1)
-      setGaranties(garanties.filter((_, i) => i !== index));
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!contrat.numeroContrat || !contrat.branche || !contrat.codeBranche) {
+    toast({
+      title: 'Champs requis manquants',
+      description: 'Veuillez remplir les champs obligatoires du contrat',
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+    });
+    return;
+  }
+  
+  if (!selectedPackCode) {
+    toast({
+      title: "Pack non sélectionné",
+      description: "Veuillez sélectionner un pack",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+    return;
+  }
+
+  if (isUpdate) {
+    const pack = {
+      codePack: selectedPackCode,
+      numeroContrat: contrat.numeroContrat,
+    };
+    onSubmit({ contrat, garanties, profilVehicule, pack });
+  } else {
+    onOpen();
+  }
+};
+
+const confirmSubmit = () => {
+  const pack = {
+    codePack: selectedPackCode,
+    numeroContrat: contrat.numeroContrat,
   };
+  onSubmit({ contrat, garanties, profilVehicule, pack });
+  onClose();
+};
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!contrat.numeroContrat || !contrat.branche || !contrat.codeBranche) {
-      toast({
-        title: 'Champs requis manquants',
-        description: 'Veuillez remplir les champs obligatoires du contrat',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (isUpdate) {
-      onSubmit({ contrat, garanties, profilVehicule });
-    } else {
-      onOpen();
-    }
-  };
-
-  const confirmSubmit = () => {
-    onSubmit({ contrat, garanties, profilVehicule });
-    onClose();
-  };
 const handleReset = () => {
   setContrat(initialData?.contrat ?? initialContratData);
   setGaranties(initialData?.garanties ?? [{ ...initialGarantieData }]);
   setProfilVehicule(initialData?.profilVehicule ?? initialVehiculeData);
 };
+const [agences, setAgences] = useState<Agence[]>([]);
+
+useEffect(() => {
+  const fetchAgences = async () => {
+    try {
+      const data = await getAgences();
+      setAgences(data);
+    } catch (error) {
+      console.error('Erreur lors du chargement des agences', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de charger la liste des agences.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  fetchAgences();
+}, []);
+
   return (
     <Box p={6} borderWidth="1px" borderRadius="lg">
       <Heading as="h2" size="lg" mb={6}>
@@ -206,8 +236,8 @@ const handleReset = () => {
           <AccordionItem>
             <h2>
               <AccordionButton>
-                <Box as="span" flex='1' textAlign='left'>
-                  Contrat
+               <Box as="span" flex="1" textAlign="left" fontWeight="bold">
+                    Contrat
                 </Box>
                 <AccordionIcon />
               </AccordionButton>
@@ -222,8 +252,29 @@ const handleReset = () => {
                 <LabeledInput label="Immatriculation" name="immatriculation" value={contrat.immatriculation} onChange={handleContratChange} />
                 <LabeledInput label="Prime Annuelle" name="primeAnnuelle" value={contrat.primeAnnuelle} onChange={handleContratChange} />
                 <LabeledInput label="Échéance" name="echeanceContractuelle" value={contrat.echeanceContractuelle} onChange={handleContratChange} />
-                <LabeledInput label="Code Agence" name="codeAgence" value={contrat.codeAgence} onChange={handleContratChange} />
-                <LabeledInput label="Libellé Agence" name="libelleAgence" value={contrat.libelleAgence} onChange={handleContratChange} />
+                <FormControl >
+                <FormLabel>Agence</FormLabel>
+                        <Select
+                                placeholder="Sélectionner une agence"
+                                value={contrat.codeAgence}
+                                onChange={(e) => {
+                                  const selectedCode = e.target.value;
+                                  const selectedAgence = agences.find(a => a.code_agence === selectedCode);
+
+                                  setContrat(prev => ({
+                                    ...prev,
+                                    codeAgence: selectedCode,
+                                    libelleAgence: selectedAgence?.nom_agence || '',
+                                  }));
+                                }}
+                              >
+                                {agences.map((agence) => (
+                                  <option key={agence.code_agence} value={agence.code_agence}>
+                                    {agence.nom_agence} ({agence.code_agence})
+                                  </option>
+                                ))}
+                      </Select>
+                  </FormControl>
                 <LabeledInput label="Date Expiration" name="dateExpiration" value={contrat.dateExpiration} onChange={handleContratChange} type="date" />
                 <LabeledInput label="Date Effet" name="dateEffet" value={contrat.dateEffet} onChange={handleContratChange} type="date" />
               </Grid>
@@ -254,49 +305,82 @@ const handleReset = () => {
           </AccordionItem>
 
           {/* GARANTIES */}
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box as="span" flex='1' textAlign='left'>
-                  Garanties
-                </Box>
-                <AccordionIcon />
-                
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              <VStack spacing={4} align="stretch">
-                {garanties.map((garantie, index) => (
-                  <Box key={index} p={4} borderWidth="1px" borderRadius="md">
-                    <HStack justify="space-between" mb={4}>
-                      <Heading as="h4" size="sm">Garantie #{index + 1}</Heading>
-                      {garanties.length > 1 && (
-                        <Button size="sm" colorScheme="red" onClick={() => removeGarantie(index)}>
-                          Supprimer
-                        </Button>
-                      )}
-                    </HStack>
-                    <Grid templateColumns={["1fr", "repeat(2, 1fr)", "repeat(3, 1fr)"]} gap={4}>
-                      <LabeledInput label="Libellé" name="libelleGarantie" value={garantie.libelleGarantie} onChange={(e) => handleGarantieChange(index, e)} />
-                      <LabeledInput label="Code" name="codeGarantie" value={garantie.codeGarantie} onChange={(e) => handleGarantieChange(index, e)} />
-                      <LabeledInput label="Capital assuré" name="capitalAssure" value={garantie.capitalAssure} onChange={(e) => handleGarantieChange(index, e)} />
-                      <LabeledInput label="Franchise" name="franchise" value={garantie.franchise} onChange={(e) => handleGarantieChange(index, e)} />
-                      <LabeledInput label="Rang" name="rangAffichage" value={garantie.rangAffichage} onChange={(e) => handleGarantieChange(index, e)} type="number" />
-                    </Grid>
-                  </Box>
-                ))}
-                <Button leftIcon={<AddIcon />} onClick={addGarantie}>
-                    Ajouter une garantie
-                </Button>
-              </VStack>
-            </AccordionPanel>
-          </AccordionItem>
+         <AccordionItem>
+  <h2>
+    <AccordionButton>
+      <Box as="span" flex="1" textAlign="left" fontWeight="bold">Garanties</Box>
+      <AccordionIcon />
+    </AccordionButton>
+  </h2>
+  <AccordionPanel pb={4}>
+    {/* Sélection du Pack */}
+    <FormControl mb={4}>
+      <FormLabel>Choisir un Pack</FormLabel>
+      <Select
+        placeholder="Sélectionnez un pack"
+        onChange={(e) => {
+          const selectedPack = packs.find(p => p.code === e.target.value);
+          if (selectedPack) {
+            setGaranties(
+              selectedPack.garanties.map(g => ({
+                libelleGarantie: g.libelle,
+                codeGarantie: g.code,
+                capitalAssure: g.capital,
+                franchise: g.franchise,
+              }))
+            );
+            setSelectedPackCode(selectedPack.code);
+          }
+        }}
+        value={selectedPackCode}
+      >
+        {packs.map((pack) => (
+          <option key={pack.code} value={pack.code}>
+            {pack.name}
+          </option>
+        ))}
+      </Select>
+    </FormControl>
+    {/* Garanties optionnelles */}
+    <Heading as="h4" size="sm" mb={2}>Garanties optionnelles :</Heading>
+    <VStack align="start" spacing={2}>
+      {garantiesOptionnelles.map((g, i) => {
+        const isSelected = garanties.some(opt => opt.codeGarantie === g.code);
+        return (
+          <Checkbox
+            key={i}
+            isChecked={isSelected}
+            onChange={(e) => {
+              if (e.target.checked) {
+                setGaranties(prev => [
+                  ...prev,
+                  {
+                   libelleGarantie: g.libelle,
+                   codeGarantie: g.code,
+                   capitalAssure: g.capital,
+                   franchise: g.franchise,
+                   rangAffichage: g.rang,
+                  }
+                ]);
+              } else {
+                setGaranties(prev => prev.filter(opt => opt.codeGarantie !== g.code));
+              }
+            }}
+          >
+            {g.libelle} 
+          </Checkbox>
+        );
+      })}
+    </VStack>
+  </AccordionPanel>
+</AccordionItem>
+
 
           {/* VÉHICULE */}
         <AccordionItem>
             <h2>
                 <AccordionButton>
-                <Box as="span" flex='1' textAlign='left'>
+                <Box as="span" flex='1' textAlign='left' fontWeight="bold">
                     Véhicule
                 </Box>
                 <AccordionIcon />
