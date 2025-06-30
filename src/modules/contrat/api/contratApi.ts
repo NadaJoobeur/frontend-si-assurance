@@ -25,6 +25,8 @@ export const updateContrat = async (
 }
 
 export const getDetailContrat = async (numeroContrat: string): Promise<ApiResponse<NouveauContratPayload>> => {
+  console.log('Requête détail contrat pour:', numeroContrat);
   const response = await axiosClient.get(`/contrats/${numeroContrat}/details`);
+  console.log('Réponse API:', response.data);
   return response.data; // ici response.data devrait contenir { success: true, data: {...} }
 };

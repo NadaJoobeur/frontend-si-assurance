@@ -12,6 +12,10 @@ import ContratsPage from '../../modules/contrat/pages/ContratsPage'
 import ContratDetailPage from '../../modules/contrat/pages/ContratDetailPage'
 import ContratUpdatePage from '../../modules/contrat/pages/ContratUpdatePage'
 import  PacksPage from '../../modules/garantie/Pages/PacksPage'
+import CreateAgencePage from '../../modules/agence/pages/CreateAgencePage'
+import AgencesPage from '../../modules/agence/pages/AgencesPage'
+import AgenceUpdatePage from '../../modules/agence/pages/AgenceUpdatePage'
+import AgenceDetailPage from '../../modules/agence/pages/AgenceDetailPage'
 const router = createBrowserRouter([
   {
     path: '/login',
@@ -59,6 +63,20 @@ const router = createBrowserRouter([
 {
   path: '/garantie',
   element: <PacksPage />,
+},
+{
+  path: '/agence/add',
+  element: <CreateAgencePage/>,
+},
+ { path: '/agences/list',
+  element: < AgencesPage />,
+},
+ { path: '/agences/detail/:code_agence',
+  element: <AgenceDetailPage />,
+},
+ {
+  path: '/agences/edit/:code_agence',
+  element: <AgenceUpdatePage />,
 },
 {
     path: '*', // mettre cette route en dernier
