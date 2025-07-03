@@ -29,10 +29,14 @@ import {
   Button,
   useToast,
   Spinner,
+  HStack,
+  VStack,
  
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
-import { ChevronLeftIcon, EditIcon, DeleteIcon} from '@chakra-ui/icons';
+import { ChevronLeftIcon, EditIcon, DeleteIcon,} from '@chakra-ui/icons';
+import { FaMapMarkerAlt, FaHashtag, FaRoad, FaEnvelopeOpenText, FaPhoneAlt,  FaMobileAlt, FaEnvelope } from 'react-icons/fa';
+
 import { useContratsClient } from '../hooks/useContratsClient';
 
 import { useDetailPersonne } from '../hooks/usePersonne';
@@ -52,7 +56,7 @@ console.log(personneData)
   const cardBg = useColorModeValue('white', 'gray.700');
   const dividerColor = useColorModeValue('gray.200', 'gray.600');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
-
+const bgBx=useColorModeValue('white', 'gray.700')
   // Handlers
   const handleEdit = () => navigate(`/person/edit/${numeroIdentification}`);
   const { contrats, loading: loadingContrats } = useContratsClient(numeroIdentification!);
@@ -184,31 +188,48 @@ console.log(personneData)
                  {(personneData.listeAdresse || []).length > 0 ? (
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={1}>
                      {(personneData.listeAdresse || []).map((adresse, idx) => (
-                        <Box
-                          key={idx}
-                          p={6}
-                          borderWidth="2px"
-                          borderRadius="lg"
-                          borderColor={dividerColor}
-                          _hover={{ transform: 'scale(1.02)', transition: 'transform 0.2s' }}
-                        >
-                          <Flex justify="space-between" mb={1}>
-                            <Text fontSize="lg" fontWeight="bold">
-                              Adresse {idx + 1}
-                            </Text>
-                            {adresse.contactParDefaut && (
-                              <Tag colorScheme="blue" size="md">
-                                <TagLabel>Par défaut</TagLabel>
-                              </Tag>
-                            )}
-                          </Flex>
-                          <Stack spacing={3}>
-                            <InfoItem label="Numéro Rue" value={adresse.numRue} />
-                            <InfoItem label="Nom Rue" value={adresse.nomRue} />
-                            <InfoItem label="Code Postal" value={adresse.codePostal} />
-                            <InfoItem label="Délégation" value={adresse.delegation} />
-                          </Stack>
-                        </Box>
+                            <Box
+                key={idx}
+                p={5}
+                borderWidth="1.5px"
+                borderRadius="md"
+                borderColor="gray.300"
+                boxShadow="sm"
+                _hover={{ boxShadow: 'md', transform: 'scale(1.03)', transition: 'all 0.3s ease' }}
+                bg={bgBx}
+              >
+                <Flex justify="space-between" align="center" mb={3}>
+                  <Flex align="center" gap={2}>
+                    <FaMapMarkerAlt color="#3182ce" />
+                    <Text fontSize="lg" fontWeight="semibold">
+                      Adresse {idx + 1}
+                    </Text>
+                  </Flex>
+                  {adresse.contactParDefaut && (
+                    <Tag colorScheme="blue" size="sm" fontWeight="semibold">
+                      Par défaut
+                    </Tag>
+                  )}
+                </Flex>
+
+                <Stack spacing={3} pl={1}>
+                  <InfoItem1
+                    label="Numéro Rue"
+                    value={adresse.numRue}
+                    icon={<FaHashtag color="#3182ce" />}
+                  />
+                  <InfoItem1
+                    label="Nom Rue"
+                    value={adresse.nomRue}
+                    icon={<FaRoad color="#3182ce" />}
+                  />
+                  <InfoItem1
+                    label="Code Postal"
+                    value={adresse.codePostal}
+                    icon={<FaEnvelopeOpenText color="#3182ce" />}
+                  />
+                </Stack>
+              </Box>
                       ))}
                     </SimpleGrid>
                   ) : (
@@ -223,29 +244,43 @@ console.log(personneData)
                   {(personneData.listeTelephone || []).length > 0 ? (
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={1}>
                       {(personneData.listeTelephone || []).map((tel, idx) => (
-                        <Box
-                          key={idx}
-                          p={6}
-                          borderWidth="2px"
-                          borderRadius="lg"
-                          borderColor={dividerColor}
-                          _hover={{ transform: 'scale(1.02)', transition: 'transform 0.2s' }}
-                        >
-                          <Flex justify="space-between" mb={1}>
-                            <Text fontSize="lg" fontWeight="bold">
-                              Téléphone {idx + 1}
-                            </Text>
-                            {tel.contactParDefaut && (
-                              <Tag colorScheme="blue" size="md">
-                                <TagLabel>Par défaut</TagLabel>
-                              </Tag>
-                            )}
-                          </Flex>
-                          <Stack spacing={3}>
-                            <InfoItem label="Numéro" value={tel.numeroTelephone} />
-                            <InfoItem label="Type" value={tel.typeTelephone} />
-                          </Stack>
-                        </Box>
+                                      <Box
+                    key={idx}
+                    p={5}
+                    borderWidth="1.5px"
+                    borderRadius="md"
+                    borderColor="gray.300"
+                    boxShadow="sm"
+                    _hover={{ boxShadow: 'md', transform: 'scale(1.03)', transition: 'all 0.3s ease' }}
+                    bg={bgBx}
+                  >
+                    <Flex justify="space-between" align="center" mb={3}>
+                      <Flex align="center" gap={2}>
+                        <FaPhoneAlt color="#3182ce" />
+                        <Text fontSize="lg" fontWeight="semibold">
+                          Téléphone {idx + 1}
+                        </Text>
+                      </Flex>
+                      {tel.contactParDefaut && (
+                        <Tag colorScheme="blue" size="sm" fontWeight="semibold">
+                          Par défaut
+                        </Tag>
+                      )}
+                    </Flex>
+
+                    <Stack spacing={3} pl={1}>
+                                        <InfoItem1
+                      label="Téléphone"
+                      value={tel.numeroTelephone}
+                      icon={<FaMobileAlt color="#3182ce" />}
+                    />
+                      <InfoItem1
+                        label="Type"
+                        value={tel.typeTelephone}
+                        icon={<FaMobileAlt color="#3182ce" />}
+                      />
+                    </Stack>
+                  </Box>
                       ))}
                     </SimpleGrid>
                   ) : (
@@ -260,28 +295,32 @@ console.log(personneData)
                  {(personneData.listeMails || []).length > 0 ? (
                   <SimpleGrid columns={{ base: 1, md: 2 }} spacing={1}>
                     {(personneData.listeMails || []).map((mail, idx) => (
-                        <Box
-                          key={idx}
-                          p={3}
-                          borderWidth="2px"
-                          borderRadius="lg"
-                          borderColor={dividerColor}
-                          _hover={{ transform: 'scale(1.02)', transition: 'transform 0.2s' }}
-                        >
-                          <Flex justify="space-between" mb={1}>
-                            <Text fontSize="lg" fontWeight="bold">
-                              Email {idx + 1}
-                            </Text>
-                            {mail.contactParDefaut && (
-                              <Tag colorScheme="blue" size="md">
-                                <TagLabel>Par défaut</TagLabel>
-                              </Tag>
-                            )}
-                          </Flex>
-                          <Stack spacing={1}>
-                            <InfoItem label="Adresse mail" value={mail.adresseMail} />
-                          </Stack>
-                        </Box>
+                    <Box
+                      key={idx}
+                      p={4}
+                      borderWidth="2px"
+                      borderRadius="lg"
+                      borderColor={dividerColor}
+                      _hover={{ transform: 'scale(1.02)', transition: 'transform 0.2s' }}
+                    >
+                      <Flex justify="space-between" mb={2} alignItems="center">
+                        <Text fontSize="lg" fontWeight="bold">
+                          Email {idx + 1}
+                        </Text>
+                        {mail.contactParDefaut && (
+                          <Tag colorScheme="blue" size="md">
+                            <TagLabel>Par défaut</TagLabel>
+                          </Tag>
+                        )}
+                      </Flex>
+                      <Stack spacing={3}>
+                        <InfoItem1 
+                          label="Adresse mail" 
+                          value={mail.adresseMail} 
+                          icon={<FaEnvelope color="#3182ce" />} 
+                        />
+                      </Stack>
+                    </Box>
                       ))}
                     </SimpleGrid>
                   ) : (
@@ -389,5 +428,13 @@ const InfoItem = ({ label, value }: { label: string; value?: string | number | b
     </Text>
   </Box>
 );
-
+const InfoItem1 = ({ label, value, icon }: { label: string; value: string | number|null|undefined; icon?: React.ReactElement }) => (
+  <HStack spacing={3} p={3} bg="gray.50" borderRadius="md" boxShadow="sm" minW="200px">
+    {icon && <Box color="blue.500">{icon}</Box>}
+    <VStack spacing={0} align="start">
+      <Text fontWeight="semibold" fontSize="sm" color="gray.600">{label}</Text>
+      <Text fontSize="md" fontWeight="medium" color="gray.800">{value || 'N/A'}</Text>
+    </VStack>
+  </HStack>
+)
 export default PersonneDetailPage;

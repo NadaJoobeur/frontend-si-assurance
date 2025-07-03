@@ -48,11 +48,9 @@ const Sidebar = () => {
     { label: 'Personne', path: '/person/list' },
     { label: 'Garantie', path: '/garantie' },
     { label: "Gestion d'agence", path: '/agences/list' },
+    { label: 'Devis', path: '/devis/list' },
     { label: 'Contrat', path: '/contrat/list' },
-    
-    { label: 'Devis', path: '/devis' },
-    { label: 'Paiement', path: '/payment' },
-    { label: 'Affaire Nouvelle', path: '/new-case' },
+
   ]
 
   return (

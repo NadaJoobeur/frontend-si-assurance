@@ -7,12 +7,6 @@ const queryClient = new QueryClient()
 
 
 
-const App = () => (
-  <ChakraProvider>
-    <QueryClientProvider client={queryClient}>
-      <AppRouter />
-    </QueryClientProvider>
-  </ChakraProvider>
-)
+
 
 export default App

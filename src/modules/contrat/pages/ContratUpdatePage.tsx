@@ -19,6 +19,7 @@ const ContratUpdatePage = () => {
   const navigate = useNavigate()
 
   const { data, isLoading: loadingDetail } = useDetailContrat(numeroContrat!)
+console.log('data', data?.data)
   const updateMutation = useUpdateContrat()
 
   const handleSubmit = (formData: {
@@ -27,6 +28,8 @@ const ContratUpdatePage = () => {
     garanties: any[]
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     profilVehicule: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    pack: any
   }) => {
     updateMutation
       .updateContrat(numeroContrat!, formData)

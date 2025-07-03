@@ -17,6 +17,7 @@ export interface ContratFormData {
   indicateurSouscripteur: boolean;
   indicateurAssure: boolean;
   numeroIdentification: string; // Clé d'identification du client
+  id_devis :number;
 }
 
 export interface GarantieContratData {
@@ -49,6 +50,7 @@ export interface ProfilVehiculeData {
 export interface PackData {
   numeroContrat: string;
   codePack: string;
+  id_devis: number;
 }
 
 

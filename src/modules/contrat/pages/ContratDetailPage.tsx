@@ -28,14 +28,17 @@ import {
   ModalFooter,
   Button ,
   useToast,
+  HStack,
+  VStack,
 } from '@chakra-ui/react';
 import { ChevronLeftIcon, EditIcon,DeleteIcon } from '@chakra-ui/icons';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDetailContrat } from '../hooks/useDetailContrat';
-import { formatDate } from '../utils/dateUtils';
+import { formatDate } from '../../../shared/utils/dateUtils';
 import Sidebar from '../../../shared/components/Sidebar';
 import Footer from '../../../shared/components/Footer';
 import { useDeleteContrat } from '../hooks/useDeleteContrat';
+import { FaBolt, FaCalendarAlt, FaCar, FaHashtag, FaLayerGroup, FaMoneyBillWave, FaTag, FaTools, FaUserCheck, FaWeightHanging } from 'react-icons/fa';
 
 const ContratDetailPage = () => {
   const { numeroContrat } = useParams<{ numeroContrat: string }>();
@@ -66,7 +69,7 @@ const ContratDetailPage = () => {
     );
   }
 
-  const { contrat, garanties, profilVehicule } = contratData?.data || {};
+  const { contrat, garanties, profilVehicule,pack } = contratData?.data || {};
   const vehiculeData = Array.isArray(profilVehicule) ? profilVehicule[0] : profilVehicule;
 
   if (!contrat) {
@@ -134,6 +137,8 @@ const ContratDetailPage = () => {
               >
                 {contrat.statutContrat}
               </Badge>
+                {/* Nouveau bouton pour convertir en contrat */}
+
             <IconButton
             aria-label="Modifier"
             colorScheme="teal"
@@ -177,6 +182,7 @@ const ContratDetailPage = () => {
               <InfoItem label="Code Agence" value={`${contrat.codeAgence} `} />
               <InfoItem label="Libellé Agence" value={`${contrat.libelleAgence} `} />
               <InfoItem label="Fractionnement" value={contrat.fractionnement} />
+              <InfoItem label="Pack" value={pack?.codePack} />
               <InfoItem
                 label="Souscripteur"
                 value={contrat.indicateurSouscripteur ? 'Oui' : 'Non'}
@@ -186,44 +192,88 @@ const ContratDetailPage = () => {
             <Divider borderColor={dividerColor} my={5} borderWidth="2px" /> 
 
             {/* Onglets Profil Véhicule / Garanties */}
-            <Tabs variant="enclosed" colorScheme="blue" size="lg"> 
-              <TabList>
-                <Tab fontSize="md">Profil Véhicule</Tab>  
-                <Tab fontSize="md">Garanties ({garanties?.length || 0})</Tab>
-              </TabList>
+          <Tabs variant="enclosed" colorScheme="blue" size="lg">
+  <TabList>
+    {contrat.id_devis && <Tab fontSize="md">Devis</Tab>}
+    <Tab fontSize="md">Profil Véhicule</Tab>
+    <Tab fontSize="md">Garanties ({garanties?.length || 0})</Tab>
+  </TabList>
 
-              <TabPanels mt={4}>  
-                {/* Profil Véhicule */}
-              <TabPanel>
-  {vehiculeData ? (
-    <Box 
-      p={6}
-      borderWidth="2px"
-      borderRadius="lg"
-      borderColor={dividerColor}
-    >
-      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3}>
-        <InfoItem label="Immatriculation" value={vehiculeData.numeroImmatriculation} />
-        <InfoItem label="Numero de serie" value={vehiculeData.numeroSerie} />
-        <InfoItem label="Marque" value={vehiculeData.marque} />
-        <InfoItem label="Type" value={vehiculeData.typeVehicule} />
-        <InfoItem label="Constructeur" value={vehiculeData.constructeur} />
-        <InfoItem label="Nature" value={vehiculeData.natureVehicule} />
-        <InfoItem label="Date 1ère mise" value={formatDate(vehiculeData.datePremiereMise)} />
-         <InfoItem label="Date D'obtention permis" value={formatDate(vehiculeData.dateObtentionPermis)} />
-        <InfoItem label="Charge utile" value={vehiculeData.ChargeUtile} />
-        <InfoItem label="Poids total en charge" value={vehiculeData.poidsTotalEnCharge} />
-        <InfoItem label="Nombre de places" value={vehiculeData.nombreDePlaces} />
-        <InfoItem label="Puissance fiscale" value={vehiculeData.puissanceFiscale} />
-        <InfoItem label="Valeur venale" value={vehiculeData.valeurVenale} />
-        <InfoItem label="Bonus/Malus" value={vehiculeData.bonusMalus} />
-      </SimpleGrid>
-    </Box>
-  ) : (
-    <Text fontSize="lg" color="gray.500" mt={4}>Aucune information véhicule disponible</Text>
-  )}
+  <TabPanels mt={4}>
+    {contrat.id_devis && (
+    <TabPanel>
+  <Box
+    p={6}
+    borderWidth="2px"
+    borderRadius="lg"
+    borderColor={dividerColor}
+    bg="gray.50"
+    boxShadow="md"
+  >
+    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} alignItems="center">
+      <Box>
+        <Text fontSize="lg" fontWeight="bold" mb={2}>
+          Informations du devis
+        </Text>
+        <InfoItem label="ID du devis" value={contrat.id_devis} />
+      </Box>
+
+      <Box textAlign={{ base: "left", md: "right" }}>
+        <Link to={`/devis/detail/${contrat.id_devis}`}>
+          <Button colorScheme="blue" variant="solid">
+            Consulter le devis
+          </Button>
+        </Link>
+      </Box>
+    </SimpleGrid>
+  </Box>
 </TabPanel>
 
+    )}              
+                {/* Profil Véhicule */}
+       <TabPanel>
+         {profilVehicule ? (
+           <Box          p={6}
+           borderWidth="2px"
+           borderRadius="lg"
+           borderColor={dividerColor}
+           bg="gray.50"
+           boxShadow="md">
+       
+             <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={6}>
+       
+               {/* Immatriculation & identification */}
+               <InfoItem1 label="Immatriculation" value={vehiculeData.numeroImmatriculation} icon={<FaCar />} />
+               <InfoItem1 label="Numéro de série" value={vehiculeData.numeroSerie} icon={<FaHashtag />} />
+               <InfoItem1 label="Marque" value={vehiculeData.marque} icon={<FaTools />} />
+               <InfoItem1 label="Constructeur" value={vehiculeData.constructeur} icon={<FaTools />} />
+       
+               {/* Type & nature */}
+               <InfoItem1 label="Type" value={vehiculeData.typeVehicule}  icon={<FaTag />}/>
+               <InfoItem1 label="Nature" value={vehiculeData.natureVehicule} icon={<FaLayerGroup/>} />
+       
+               {/* Dates importantes */}
+               <InfoItem1 label="Date 1ère mise en circulation" value={formatDate(vehiculeData.datePremiereMise)} icon={<FaCalendarAlt />} />
+               <InfoItem1 label="Date obtention permis" value={formatDate(vehiculeData.dateObtentionPermis)} icon={<FaCalendarAlt />} />
+       
+               {/* Capacités & poids */}
+               <InfoItem1 label="Charge utile" value={`${vehiculeData.ChargeUtile} kg`} icon={<FaWeightHanging />} />
+               <InfoItem1 label="Poids total en charge" value={`${vehiculeData.poidsTotalEnCharge} kg`} icon={<FaWeightHanging />} />
+               <InfoItem1 label="Nombre de places" value={vehiculeData.nombreDePlaces} icon={<FaUserCheck/>} />
+       
+               {/* Performances & valeurs */}
+               <InfoItem1 label="Puissance fiscale" value={`${vehiculeData.puissanceFiscale} CV `} icon={<FaBolt/>}/>
+               <InfoItem1 label="Valeur vénale" value={`${vehiculeData.valeurVenale} dt`} icon={<FaMoneyBillWave/>}/>
+               <InfoItem1 label="Bonus/Malus" value={vehiculeData.bonusMalus} icon={<FaHashtag/>}/>
+       
+             </SimpleGrid>
+           </Box>
+         ) : (
+           <Text fontSize="md" color="gray.500" mt={4}>
+             Aucune information véhicule disponible.
+           </Text>
+         )}
+       </TabPanel>
                 {/* Garanties */}
                 <TabPanel>
                   {garanties && garanties.length > 0 ? (
@@ -231,10 +281,12 @@ const ContratDetailPage = () => {
                       {garanties.map((garantie, index) => (
                         <Box
                           key={`${garantie.codeGarantie}-${index}`}
-                          p={6}  // Padding augmenté
-                          borderWidth="2px"  // Bordure plus épaisse
-                          borderRadius="lg"  // Border radius plus grand
-                          borderColor={dividerColor}
+                          p={6}
+           borderWidth="2px"
+           borderRadius="lg"
+           borderColor={dividerColor}
+           bg="gray.50"
+           boxShadow="md"
                           _hover={{ transform: 'scale(1.02)', transition: 'transform 0.2s' }} 
                         >
                           <Flex justify="space-between" mb={4}> 
@@ -300,6 +352,15 @@ const ContratDetailPage = () => {
     </Flex>
   );
 };
+const InfoItem1 = ({ label, value, icon }: { label: string; value: string | number|null|undefined; icon?: React.ReactElement }) => (
+  <HStack spacing={3} p={3} bg="gray.50" borderRadius="md" boxShadow="sm" minW="200px">
+    {icon && <Box color="blue.500">{icon}</Box>}
+    <VStack spacing={0} align="start">
+      <Text fontWeight="semibold" fontSize="sm" color="gray.600">{label}</Text>
+      <Text fontSize="md" fontWeight="medium" color="gray.800">{value || 'N/A'}</Text>
+    </VStack>
+  </HStack>
+)
 
 // Version agrandie du composant InfoItem
 const InfoItem = ({ label, value }: { label: string; value?: string | number | null }) => (
