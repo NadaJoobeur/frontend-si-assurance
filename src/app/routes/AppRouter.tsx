@@ -16,7 +16,13 @@ import CreateAgencePage from '../../modules/agence/pages/CreateAgencePage'
 import AgencesPage from '../../modules/agence/pages/AgencesPage'
 import AgenceUpdatePage from '../../modules/agence/pages/AgenceUpdatePage'
 import AgenceDetailPage from '../../modules/agence/pages/AgenceDetailPage'
+import CreateDevisPage from '../../modules/devis/pages/CreateDevisPage'
+import DevisPage from '../../modules/devis/pages/DevisPage'
+import DevisDetailPage from '../../modules/devis/pages/DevisDetailPage'
+import DevisUpdatePage from '../../modules/devis/pages/DevisUpdatePage'
+import { ContratFromDevisPage } from '../../modules/devis/pages/ContratFromDevisPage'
 const router = createBrowserRouter([
+  //Authentifiaction
   {
     path: '/login',
     element: <LoginPage />,
@@ -29,6 +35,7 @@ const router = createBrowserRouter([
     path: '/homepage',
     element: <HomePage />,
   },
+  //Modeule Personne
   {
     path: '/person/add',
     element: <PersonneAddPage />,
@@ -45,6 +52,7 @@ const router = createBrowserRouter([
   path: '/person/edit/:numeroIdentification',
   element: <PersonneEditPage />,
 },
+//Module Contrat
 {
   path: '/contrat/add',
   element: <CreateContratPage/>,
@@ -60,10 +68,12 @@ const router = createBrowserRouter([
   path: '/contrat/edit/:numeroContrat',
   element: <ContratUpdatePage />,
 },
+//Module Garantie
 {
   path: '/garantie',
   element: <PacksPage />,
 },
+//Module Agence
 {
   path: '/agence/add',
   element: <CreateAgencePage/>,
@@ -77,6 +87,26 @@ const router = createBrowserRouter([
  {
   path: '/agences/edit/:code_agence',
   element: <AgenceUpdatePage />,
+},
+//Module Devis
+{
+  path: '/devis/add',
+  element: <CreateDevisPage/>,
+},
+ { path: '/devis/list',
+  element: < DevisPage />,
+},
+ {
+  path: '/devis/detail/:id_devis',
+  element: <DevisDetailPage />,
+},
+ {
+  path: '/devis/edit/:id_devis',
+  element: <DevisUpdatePage />,
+},
+{
+ path:'/devis/to/contrat/:id'  ,
+ element:<ContratFromDevisPage/>,
 },
 {
     path: '*', // mettre cette route en dernier

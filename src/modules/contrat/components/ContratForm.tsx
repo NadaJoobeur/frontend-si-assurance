@@ -64,7 +64,7 @@ const initialContratData: ContratFormData = {
   libelleAgence: '', dateExpiration: '', dateEffet: '',
   fractionnement: 'MENSUEL', nature: 'NOUVEAU',
   indicateurSouscripteur: false, indicateurAssure: false,
-  numeroIdentification: '',
+  numeroIdentification: '',id_devis:0
 };
 
 const initialGarantieData: GarantieContratData = {
@@ -83,6 +83,8 @@ interface ContratFormProps {
     contrat: ContratFormData;
     garanties?: GarantieContratData[];
     profilVehicule?: ProfilVehiculeData;
+    pack?: PackData;
+
   };
 onSubmit: (data: {
   contrat: ContratFormData;
@@ -93,6 +95,8 @@ onSubmit: (data: {
   isLoading?: boolean;
   title?: string;
   isUpdate?: boolean;
+  isFromDevis?: boolean;
+
 }
 
 const LabeledInput: React.FC<LabeledInputProps> = ({ 
@@ -131,6 +135,12 @@ export const ContratForm: React.FC<ContratFormProps> = ({
     initialData?.profilVehicule ?? initialVehiculeData
   );
 const [selectedPackCode, setSelectedPackCode] = useState<string>('');
+useEffect(() => {
+  if (initialData?.pack?.codePack) {
+    setSelectedPackCode(initialData.pack.codePack);
+  }
+}, [initialData]);
+
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -176,6 +186,7 @@ const handleSubmit = (e: React.FormEvent) => {
     const pack = {
       codePack: selectedPackCode,
       numeroContrat: contrat.numeroContrat,
+      id_devis:1,
     };
     onSubmit({ contrat, garanties, profilVehicule, pack });
   } else {
@@ -187,6 +198,7 @@ const confirmSubmit = () => {
   const pack = {
     codePack: selectedPackCode,
     numeroContrat: contrat.numeroContrat,
+     id_devis:1,
   };
   onSubmit({ contrat, garanties, profilVehicule, pack });
   onClose();
@@ -330,6 +342,7 @@ useEffect(() => {
               }))
             );
             setSelectedPackCode(selectedPack.code);
+            
           }
         }}
         value={selectedPackCode}
