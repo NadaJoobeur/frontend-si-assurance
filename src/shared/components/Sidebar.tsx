@@ -50,7 +50,7 @@ const Sidebar = () => {
     { label: "Gestion d'agence", path: '/agences/list' },
     { label: 'Devis', path: '/devis/list' },
     { label: 'Contrat', path: '/contrat/list' },
-
+    { label: 'Paiement', path: '/paiement/list' },
   ]
 
   return (
@@ -85,15 +85,22 @@ const Sidebar = () => {
           </Text>
         </HStack>
 
-      <Box w="full" px={3}>
-        <hr
-          style={{
-            borderColor: useColorModeValue('#CBD5E0', '#4A5568'), 
-            borderWidth: '1px',
-            marginBottom: '12px',
-            marginTop: 0,
-          }}
-        />
+    <Box w="full" px={3}>
+      <hr
+        style={{
+          borderColor: useColorModeValue('#CBD5E0', '#4A5568'), 
+          borderWidth: '1px',
+          marginBottom: '12px',
+          marginTop: 0,
+        }}
+      />
+
+      {/* Bloc cliquable utilisateur */}
+      <Box
+        cursor="pointer"
+        onClick={() => handleNavClick('/owner/profile')}
+        _hover={{ opacity: 0.8 }}
+      >
         <HStack spacing={3} userSelect="none">
           <Box
             bgGradient={bgGradient}
@@ -107,15 +114,19 @@ const Sidebar = () => {
             {username || 'Utilisateur'}
           </Text>
         </HStack>
-        <hr
-          style={{
-            borderColor: useColorModeValue('#CBD5E0', '#4A5568'),
-            borderWidth: '1px',
-            marginTop: '12px',
-            marginBottom: 0,
-          }}
-        />
       </Box>
+
+
+
+  <hr
+    style={{
+      borderColor: useColorModeValue('#CBD5E0', '#4A5568'),
+      borderWidth: '1px',
+      marginTop: '12px',
+      marginBottom: 0,
+    }}
+  />
+</Box>
 
         {/* Navigation Links */}
         <VStack align="start" spacing={4} mt={2} w="full" flex="1">

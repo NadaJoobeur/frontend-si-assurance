@@ -1,42 +1,40 @@
 import React from 'react';
-import { 
-  Box, 
-  Text, 
-  Badge, 
-  HStack, 
-  IconButton, 
-  Spacer, 
-  useDisclosure, 
-  AlertDialog, 
-  AlertDialogOverlay, 
-  AlertDialogContent, 
-  AlertDialogHeader, 
-  AlertDialogBody, 
-  AlertDialogFooter, 
-  Button 
+import {
+  Box,
+  Text,
+  HStack,
+  IconButton,
+  Spacer,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+  Button
 } from '@chakra-ui/react';
-import { FaTrash, FaEdit } from 'react-icons/fa';
-import type { AgenceBase } from '../types/Agence';
+import { FaTrash } from 'react-icons/fa'; // 👈 plus de FaEdit !
+import type { Paiement } from '../types/paiementTypes';
 
 type Props = {
-  agenceData: AgenceBase;
+  paiementData: Paiement;
   onClick?: () => void;
-  onDelete?: (id: string) => Promise<void>;
-  onEdit?: (id: string) => void;
+  onDelete?: (id: number) => Promise<void>;
 };
 
-const AgenceItem = ({ agenceData, onClick, onDelete, onEdit }: Props) => {
+const PaiementItem = ({ paiementData, onClick, onDelete }: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef<HTMLButtonElement>(null);
 
-  const handleDeleteClick = async (e: React.MouseEvent) => {
+  const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onOpen();
   };
 
   const confirmDelete = async () => {
     if (onDelete) {
-      await onDelete(agenceData.code_agence);
+      await onDelete(paiementData.id);
     }
     onClose();
   };
@@ -49,35 +47,24 @@ const AgenceItem = ({ agenceData, onClick, onDelete, onEdit }: Props) => {
         borderRadius="lg"
         shadow="sm"
         cursor={onClick ? 'pointer' : 'default'}
-        _hover={onClick ? { bg: 'blue.50' } : {}}
+        _hover={onClick ? { bg: 'gray.700' } : {}}
         onClick={onClick}
         display="flex"
         alignItems="center"
+        bg="gray.800"
       >
-        <Box flex="1">
+        <Box flex="1" color="white">
           <Text fontWeight="bold" fontSize="lg">
-            {agenceData.code_agence} — {agenceData.nom_agence}
+            Paiement ID: {paiementData.id}
           </Text>
-          <HStack mt={1} spacing={2}>
-            <Badge colorScheme={agenceData.statut === 'active' ? 'green' : 'red'}>
-              {agenceData.statut === 'active' ? 'Active' : 'Inactive'}
-            </Badge>
-          </HStack>
+          <Text fontSize="sm" mt={1}>
+            Montant: {paiementData.depositAmount} {paiementData.currency}
+          </Text>
         </Box>
 
         <Spacer />
 
         <HStack spacing={2}>
-          <IconButton
-            aria-label="Modifier"
-            icon={<FaEdit />}
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onEdit) onEdit(agenceData.code_agence);
-            }}
-          />
-          
           <IconButton
             aria-label="Supprimer"
             icon={<FaTrash />}
@@ -88,7 +75,6 @@ const AgenceItem = ({ agenceData, onClick, onDelete, onEdit }: Props) => {
         </HStack>
       </Box>
 
-      {/* Boîte de dialogue de confirmation */}
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
@@ -97,12 +83,11 @@ const AgenceItem = ({ agenceData, onClick, onDelete, onEdit }: Props) => {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Supprimer l'agence
+              Supprimer le paiement
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              Êtes-vous sûr de vouloir supprimer l'agence {agenceData.nom_agence} ({agenceData.code_agence}) ?
-              Cette action est irréversible.
+              Es-tu sûr de vouloir supprimer ce paiement ID: {paiementData.id} ?
             </AlertDialogBody>
 
             <AlertDialogFooter>
@@ -120,6 +105,4 @@ const AgenceItem = ({ agenceData, onClick, onDelete, onEdit }: Props) => {
   );
 };
 
-export default AgenceItem;
-
-
+export default PaiementItem;

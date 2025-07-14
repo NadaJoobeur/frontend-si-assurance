@@ -5,8 +5,15 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import theme from './theme/index'
 const queryClient = new QueryClient()
 
-
-
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider theme={theme}>
+        <AppRouter />
+      </ChakraProvider>
+    </QueryClientProvider>
+  )
+}
 
 
 export default App
