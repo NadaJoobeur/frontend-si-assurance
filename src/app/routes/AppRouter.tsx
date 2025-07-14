@@ -21,7 +21,32 @@ import DevisPage from '../../modules/devis/pages/DevisPage'
 import DevisDetailPage from '../../modules/devis/pages/DevisDetailPage'
 import DevisUpdatePage from '../../modules/devis/pages/DevisUpdatePage'
 import { ContratFromDevisPage } from '../../modules/devis/pages/ContratFromDevisPage'
+import PaiementPage from '../../modules/paiement/pages/PaiementListPage'
+import CreatePaiementPage from '../../modules/paiement/pages/CreatePaiementPage'
+import PaiementDetailPage from '../../modules/paiement/pages/PaiementDetailPage'
+import OwnerProfilePage from '../../modules/ownerProfile/pages/OwnerProfilePage'
+
 const router = createBrowserRouter([
+  //Nada
+  // Routes pour le module Paiement
+  {
+    path:"/owner/profile" ,
+    element:<OwnerProfilePage />,
+
+  },
+  {
+    path:'/paiement/detail/:id',
+    element: <PaiementDetailPage /> ,
+  },
+  {
+    path: '/paiement/list',
+    element: <PaiementPage />,
+  },
+  {
+  path: '/paiement/add',
+  element: <CreatePaiementPage />,
+  },
+
   //Authentifiaction
   {
     path: '/login',

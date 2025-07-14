@@ -9,6 +9,7 @@ export const getAgences = async (): Promise<Agence []> => {
   const { data } = await axiosClient.get(`/agences/listAgence`)
   return data
 }
+
 export const deleteAgence = async (code_agence: string): Promise<void> => {
    await axiosClient.delete(`/agences/DeleteAgence/${code_agence}`)
 
