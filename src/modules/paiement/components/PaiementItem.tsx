@@ -42,18 +42,17 @@ const PaiementItem = ({ paiementData, onClick, onDelete }: Props) => {
   return (
     <>
       <Box
-        p={4}
+             p={4}
         borderWidth="1px"
         borderRadius="lg"
         shadow="sm"
         cursor={onClick ? 'pointer' : 'default'}
-        _hover={onClick ? { bg: 'gray.700' } : {}}
+        _hover={onClick ? { bg: 'blue.50' } : {}}
         onClick={onClick}
         display="flex"
         alignItems="center"
-        bg="gray.800"
       >
-        <Box flex="1" color="white">
+        <Box flex="1" >
           <Text fontWeight="bold" fontSize="lg">
             Paiement ID: {paiementData.id}
           </Text>

@@ -1,4 +1,4 @@
-import type { Agence  } from '../types/Agence';
+import type { Agence } from '../types/Agence';
 import axiosClient from '../../../shared/api/axiosClient'
 import type { ApiResponse } from '../../contrat/types/ApiResponses';
 

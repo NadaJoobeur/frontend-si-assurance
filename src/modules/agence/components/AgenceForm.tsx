@@ -92,10 +92,10 @@ export const AgenceForm: React.FC<AgenceFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!agence.code_agence || !agence.nom_agence) {
+    if ( !agence.nom_agence) {
       toast({
         title: 'Champs requis manquants',
-        description: 'Le code et le nom de l\'agence sont obligatoires',
+        description: 'Le nom de l\'agence sont obligatoires',
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -133,14 +133,7 @@ export const AgenceForm: React.FC<AgenceFormProps> = ({
       
       <form onSubmit={handleSubmit}>
         <Grid templateColumns={["1fr", "repeat(2, 1fr)"]} gap={6}>
-          <LabeledInput 
-            label="Code Agence" 
-            name="code_agence" 
-            value={agence.code_agence} 
-            onChange={handleChange} 
-            isRequired 
-          />
-          
+       
           <LabeledInput 
             label="Nom Agence" 
             name="nom_agence" 

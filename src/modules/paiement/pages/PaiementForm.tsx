@@ -7,15 +7,16 @@ import {
   Input,
   Select,
   Button,
-  SimpleGrid,
+  Grid,
   Flex,
   useToast,
   VStack,
   Collapse,
   IconButton,
+  HStack,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, AddIcon, ChevronLeftIcon } from '@chakra-ui/icons';
-import { useNavigate } from 'react-router-dom'; // ✅ import de useNavigate
+import { useNavigate } from 'react-router-dom';
 import type { NouveauPaiementPayload } from '../types/paiementTypes';
 import type { Agence } from '../../agence/types/Agence';
 
@@ -34,7 +35,7 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
   isAgencesLoading,
   title,
 }) => {
-  const navigate = useNavigate(); // ✅ Déclaration
+  const navigate = useNavigate();
   const toast = useToast();
   const [codeAgence, setCodeAgence] = useState('');
   const [transactionDate, setTransactionDate] = useState('');
@@ -118,18 +119,18 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
   };
 
   return (
-    <Box p={6} rounded="md" bg="gray.800" shadow="md" color="white">
+    <Box p={6} borderWidth="1px" borderRadius="lg">
       <Heading as="h2" size="lg" mb={6}>
         <IconButton
           aria-label="Retour"
           icon={<ChevronLeftIcon />}
-          onClick={() => navigate(-1)} // ✅ Bouton retour fonctionne maintenant
+          onClick={() => navigate(-1)}
           mr={2}
         />
         {title || "Création d'un nouveau paiement"}
       </Heading>
 
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+      <Grid templateColumns={["1fr", "repeat(2, 1fr)"]} gap={6}>
         <FormControl isRequired>
           <FormLabel>Agence</FormLabel>
           <Select
@@ -200,21 +201,20 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
             ))}
           </Select>
         </FormControl>
-      </SimpleGrid>
+      </Grid>
 
       <Box mt={8}>
         <Heading size="sm" mb={4}>Liste des Quittances</Heading>
         
-        <VStack spacing={2} align="stretch">
+        <VStack spacing={4} align="stretch">
           {listeQuittances.map((q, index) => (
-            <Box key={index} borderWidth="1px" borderRadius="md" p={2}>
+            <Box key={index} borderWidth="1px" borderRadius="md" p={4}>
               <Flex 
                 justify="space-between" 
                 align="center"
                 onClick={() => toggleQuittance(index)}
                 cursor="pointer"
                 p={2}
-                _hover={{ bg: 'gray.700' }}
               >
                 <Box fontWeight="bold">Quittance #{index + 1}</Box>
                 <IconButton
@@ -226,7 +226,7 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
               </Flex>
 
               <Collapse in={q.isOpen}>
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} p={4}>
+                <Grid templateColumns={["1fr", "repeat(2, 1fr)"]} gap={4} p={4}>
                   <FormControl isRequired>
                     <FormLabel>Numéro Contrat</FormLabel>
                     <Input
@@ -297,7 +297,7 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
                       }
                     />
                   </FormControl>
-                </SimpleGrid>
+                </Grid>
               </Collapse>
             </Box>
           ))}
@@ -314,15 +314,18 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
         </Button>
       </Box>
 
-      <Flex justify="flex-end" mt={6}>
+      <HStack justify="flex-end" mt={8} spacing={4}>
+        <Button variant="outline" onClick={() => navigate(-1)}>
+          Annuler
+        </Button>
         <Button
-          colorScheme="green"
+          colorScheme="blue"
           isLoading={isLoading}
           onClick={handleFormSubmit}
         >
           Créer Paiement
         </Button>
-      </Flex>
+      </HStack>
     </Box>
   );
 };

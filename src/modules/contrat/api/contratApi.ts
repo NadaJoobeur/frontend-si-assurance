@@ -1,8 +1,8 @@
-import type { NouveauContratPayload,ContratFormData } from '../types/Contrat';
+import type { NouveauContratPayload,ContratFormData, NouveauContratPayload2 } from '../types/Contrat';
 import axiosClient from '../../../shared/api/axiosClient'
 import type { ApiResponse } from '../types/ApiResponses';
 
-export const createContrat = (data: NouveauContratPayload) => {
+export const createContrat = (data: NouveauContratPayload2) => {
   return axiosClient.post('/contrats/addContrat', data);
 };
 

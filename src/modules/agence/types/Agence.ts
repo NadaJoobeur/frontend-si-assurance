@@ -11,6 +11,5 @@ export interface AgenceBase {
 export interface Agence extends AgenceBase {
   id_agence: number; // Seule différence avec AgenceBase
 }
-
 export type AgenceFormData = AgenceBase; // Pour la création (sans id)
 export type AgenceUpdateData = AgenceBase & { id_agence: number }; // Pour les updates

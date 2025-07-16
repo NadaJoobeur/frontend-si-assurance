@@ -19,7 +19,7 @@ const AgenceUpdatePage = () => {
   const navigate = useNavigate();
 
   const { data, isLoading: loadingDetail } = useAgenceDetail(code_agence!);
-const { updateAgence, isUpdating, error } = useUpdateAgence();
+const { updateAgence, isUpdating} = useUpdateAgence();
 
 const handleSubmit = (formData: Partial<Agence>) => {
   if (!code_agence) return;
