@@ -8,16 +8,27 @@ import {
   Button,
   useColorModeValue,
   Icon,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
 } from '@chakra-ui/react'
 import { FiLogOut } from 'react-icons/fi'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { RiShakeHandsFill } from 'react-icons/ri'
+import { getPreviewUrl } from '../store/previewStore'
 
 const Sidebar = () => {
   const [username, setUsername] = useState('')
   const [activePath, setActivePath] = useState<string>('')
   const navigate = useNavigate()
   const location = useLocation()
+  const previewUrl = getPreviewUrl()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const cancelRef = React.useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     const storedName = localStorage.getItem('username')
@@ -40,8 +51,8 @@ const Sidebar = () => {
     'linear(to-r, blue.400, teal.400)',
     'linear(to-r, blue.600, teal.600)'
   )
-  const borderColor = useColorModeValue('#CBD5E0', '#4A5568') // gris clair/sombre
-  const inactiveColor = useColorModeValue('gray.700', 'gray.300');
+  const borderColor = useColorModeValue('#CBD5E0', '#4A5568')
+  const inactiveColor = useColorModeValue('gray.700', 'gray.300')
 
   const navItems = [
     { label: 'Accueil', path: '/homePage' },
@@ -51,136 +62,176 @@ const Sidebar = () => {
     { label: 'Devis', path: '/devis/list' },
     { label: 'Contrat', path: '/contrat/list' },
     { label: 'Paiement', path: '/paiement/list' },
+    { label: 'Sinistre', path: '/sinistre/list' },
   ]
 
   return (
-    <Box
-      w="250px"
-      h="100vh"
-      bg={useColorModeValue('blue.50', 'gray.900')}
-      borderRight="1px solid"
-      borderColor={useColorModeValue('gray.200', 'gray.700')}
-      position="fixed"
-      top="0"
-      left="0"
-      boxShadow="md"
-      display="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-      px={4}
-      py={6}
-    >
-      {/* Logo + Utilisateur + Nav */}
-      <VStack align="start" spacing={6} flex="1" overflowY="auto">
-        {/* Logo */}
-        <HStack
-          spacing={3}
-          cursor="pointer"
-          onClick={() => handleNavClick('/homePage')}
-          userSelect="none"
-        >
-          <Icon as={RiShakeHandsFill} w={6} h={6} color="blue.600" />
-          <Text fontSize="xl" color="blue.600" fontWeight="bold">
-            CoreAssure
-          </Text>
-        </HStack>
-
-    <Box w="full" px={3}>
-      <hr
-        style={{
-          borderColor: useColorModeValue('#CBD5E0', '#4A5568'), 
-          borderWidth: '1px',
-          marginBottom: '12px',
-          marginTop: 0,
-        }}
-      />
-
-      {/* Bloc cliquable utilisateur */}
+    <>
       <Box
-        cursor="pointer"
-        onClick={() => handleNavClick('/owner/profile')}
-        _hover={{ opacity: 0.8 }}
+        w="250px"
+        h="100vh"
+        bg={useColorModeValue('blue.50', 'gray.900')}
+        borderRight="1px solid"
+        borderColor={useColorModeValue('gray.200', 'gray.700')}
+        position="fixed"
+        top="0"
+        left="0"
+        boxShadow="md"
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        px={4}
+        py={6}
       >
-        <HStack spacing={3} userSelect="none">
-          <Box
-            bgGradient={bgGradient}
-            p="1.5px"
-            borderRadius="full"
-            display="inline-block"
+        {/* Logo + Utilisateur + Nav */}
+        <VStack align="start" spacing={6} flex="1" overflowY="auto">
+          {/* Logo */}
+          <HStack
+            spacing={3}
+            cursor="pointer"
+            onClick={() => handleNavClick('/homePage')}
+            userSelect="none"
           >
-            <Avatar size="sm" name={username || 'Utilisateur'} bg="white" color="gray.800" />
+            <Icon as={RiShakeHandsFill} w={6} h={6} color="blue.600" />
+            <Text fontSize="xl" color="blue.600" fontWeight="bold">
+              CoreAssure
+            </Text>
+          </HStack>
+
+          <Box w="full" px={3}>
+            <hr
+              style={{
+                borderColor: useColorModeValue('#CBD5E0', '#4A5568'),
+                borderWidth: '1px',
+                marginBottom: '12px',
+                marginTop: 0,
+              }}
+            />
+
+            {/* Bloc cliquable utilisateur */}
+            <Box
+              cursor="pointer"
+              onClick={() => handleNavClick('/owner/profile')}
+              _hover={{ opacity: 0.8 }}
+            >
+              <HStack spacing={3} userSelect="none">
+                <Box
+                  bgGradient={bgGradient}
+                  p="1.5px"
+                  borderRadius="full"
+                  display="inline-block"
+                >
+                  <Avatar
+                    size="sm"
+                    src={previewUrl || undefined}
+                    name={username || 'Utilisateur'}
+                    bg="white"
+                    color="gray.800"
+                  />
+                </Box>
+                <Text fontSize="lg" color="blue.600" noOfLines={1}>
+                  {username || 'Utilisateur'}
+                </Text>
+              </HStack>
+            </Box>
+
+            <hr
+              style={{
+                borderColor: useColorModeValue('#CBD5E0', '#4A5568'),
+                borderWidth: '1px',
+                marginTop: '12px',
+                marginBottom: 0,
+              }}
+            />
           </Box>
-          <Text fontSize="lg" color="blue.600" noOfLines={1}>
-            {username || 'Utilisateur'}
-          </Text>
-        </HStack>
-      </Box>
 
-
-
-  <hr
-    style={{
-      borderColor: useColorModeValue('#CBD5E0', '#4A5568'),
-      borderWidth: '1px',
-      marginTop: '12px',
-      marginBottom: 0,
-    }}
-  />
-</Box>
-
-        {/* Navigation Links */}
-        <VStack align="start" spacing={4} mt={2} w="full" flex="1">
-          {navItems.map((item) => {
-            const isActive = activePath === item.path
-            return (
-              <Text
-                key={item.path}
-                cursor="pointer"
-                fontSize="md"
-                fontWeight={isActive ? 'bold' : 'medium'}
-                onClick={() => handleNavClick(item.path)}
-                color={isActive ? 'blue.600' : inactiveColor}
-                w="full"
-                px={3}
-                py={2}
-                borderLeft={isActive ? '4px solid' : '4px solid transparent'}
-                borderColor={isActive ? 'blue.600' : 'transparent'}
-                _hover={{
-                  color: 'blue.600',
-                  borderColor: 'blue.600',
-                  bg:borderColor,
-                }}
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    handleNavClick(item.path)
-                  }
-                }}
-              >
-                {item.label}
-              </Text>
-            )
-          })}
+          {/* Navigation Links */}
+          <VStack align="start" spacing={4} mt={2} w="full" flex="1">
+            {navItems.map((item) => {
+              const isActive = activePath === item.path
+              return (
+                <Text
+                  key={item.path}
+                  cursor="pointer"
+                  fontSize="md"
+                  fontWeight={isActive ? 'bold' : 'medium'}
+                  onClick={() => handleNavClick(item.path)}
+                  color={isActive ? 'blue.600' : inactiveColor}
+                  w="full"
+                  px={3}
+                  py={2}
+                  borderLeft={isActive ? '4px solid' : '4px solid transparent'}
+                  borderColor={isActive ? 'blue.600' : 'transparent'}
+                  _hover={{
+                    color: 'blue.600',
+                    borderColor: 'blue.600',
+                    bg: borderColor,
+                  }}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      handleNavClick(item.path)
+                    }
+                  }}
+                >
+                  {item.label}
+                </Text>
+              )
+            })}
+          </VStack>
         </VStack>
-      </VStack>
 
-      {/* Bouton déconnexion en bas */}
-      <Box mt={6} pt={4} borderTop="1px solid" borderColor={useColorModeValue('gray.200', 'gray.700')}>
-        <Button
-          leftIcon={<FiLogOut />}
-          variant="outline"
-          colorScheme="red"
-          size="md"
-          w="full"
-          onClick={handleLogout}
-          _hover={{ bg: 'red.50' }}
-          aria-label="Se déconnecter"
+        {/* Bouton déconnexion en bas */}
+        <Box
+          mt={6}
+          pt={4}
+          borderTop="1px solid"
+          borderColor={useColorModeValue('gray.200', 'gray.700')}
         >
-          Se déconnecter
-        </Button>
+          <Button
+            leftIcon={<FiLogOut />}
+            variant="outline"
+            colorScheme="red"
+            size="md"
+            w="full"
+            onClick={onOpen}
+            _hover={{ bg: 'red.50' }}
+            aria-label="Se déconnecter"
+          >
+            Se déconnecter
+          </Button>
+        </Box>
       </Box>
-    </Box>
+
+      {/* Boîte de dialogue de confirmation */}
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Confirmation de déconnexion
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Êtes-vous sûr de vouloir vous déconnecter ?
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Annuler
+              </Button>
+              <Button colorScheme="red" onClick={handleLogout} ml={3}>
+                Se déconnecter
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </>
   )
 }
 
-export default Sidebar ;
+export default Sidebar

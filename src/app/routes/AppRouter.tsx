@@ -25,6 +25,10 @@ import PaiementPage from '../../modules/paiement/pages/PaiementListPage'
 import CreatePaiementPage from '../../modules/paiement/pages/CreatePaiementPage'
 import PaiementDetailPage from '../../modules/paiement/pages/PaiementDetailPage'
 import OwnerProfilePage from '../../modules/ownerProfile/pages/OwnerProfilePage'
+import CreateSinistrePage from '../../modules/sinistre/pages/CreateSinistrePage'
+import SinistrePage from '../../modules/sinistre/pages/SinistresPages'
+import SinistreDetailPage from '../../modules/sinistre/pages/SinistreDetailPage'
+import SinistreUpdatePage from '../../modules/sinistre/pages/SinistreUpdatePage'
 
 const router = createBrowserRouter([
   //Nada
@@ -134,9 +138,25 @@ const router = createBrowserRouter([
  element:<ContratFromDevisPage/>,
 },
 {
+  path: '/sinistre/add',
+  element: <CreateSinistrePage/>,
+},
+ { path: '/sinistre/list',
+  element: < SinistrePage />,
+},
+ {
+  path: '/sinistre/detail/:numeroSinistre',
+  element: <SinistreDetailPage />,
+},
+ {
+  path: '/sinistre/edit/:numeroSinistre',
+  element: <SinistreUpdatePage />,
+},
+{
     path: '*', // mettre cette route en dernier
     element: <LoginPage />,
   },
+
 ])
 
 
