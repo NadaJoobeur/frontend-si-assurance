@@ -389,6 +389,8 @@ export const DevisForm: React.FC<DevisFormProps> = ({
                     value={profilVehicule[key] || ''}
                     onChange={handleVehiculeChange}
                     type={key.toLowerCase().includes('date') ? 'date' : 'text'}
+                    isRequired={key === 'valeurVenale' || key === 'bonusMalus' ||key ==='numeroImmatriculation'}  // ✅ seulement pour ces deux
+
                   />
                 ))}
               </Grid>

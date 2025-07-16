@@ -128,13 +128,13 @@ const PersonnesListPage = () => {
             mb={8}
             color={useColorModeValue('gray.800', 'white')}
           >
-            Liste des personnes
+            Liste des clients
           </Heading>
 
           <Flex justify="center" mb={8} position="relative">
             <InputGroup maxW="600px">
               <Input
-                placeholder="Rechercher une personne par nom..."
+                placeholder="Rechercher un client par nom..."
                 value={searchName}
                 onChange={(e) => setSearchName(e.target.value)}
                 borderRadius="full"
@@ -228,7 +228,7 @@ const PersonnesListPage = () => {
           <Footer />
         </Box>
 
-        <Tooltip label="Ajouter une personne" placement="left" hasArrow>
+        <Tooltip label="Ajouter un client" placement="left" hasArrow>
           <Button
             onClick={() => navigate('/person/add')}
             colorScheme="green"

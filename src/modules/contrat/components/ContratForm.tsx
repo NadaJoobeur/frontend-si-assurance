@@ -256,11 +256,11 @@ useEffect(() => {
             </h2>
             <AccordionPanel pb={4}>
               <Grid templateColumns={["1fr", "repeat(2, 1fr)", "repeat(3, 1fr)"]} gap={6}>
-                <LabeledInput label="Numéro Identification" name="numeroIdentification" value={contrat.numeroIdentification} onChange={handleContratChange} isRequired />
+                <LabeledInput label="Id client" name="numeroIdentification" value={contrat.numeroIdentification} onChange={handleContratChange} isRequired />
                 <LabeledInput label="Numéro Contrat" name="numeroContrat" value={contrat.numeroContrat} onChange={handleContratChange} isRequired />
                 <LabeledInput label="Branche" name="branche" value={contrat.branche} onChange={handleContratChange} isRequired />
                 <LabeledInput label="Code Branche" name="codeBranche" value={contrat.codeBranche} onChange={handleContratChange} isRequired />
-                <LabeledInput label="Offre Commerciale" name="offreCommerciale" value={contrat.offreCommerciale} onChange={handleContratChange} />
+                <LabeledInput label="Offre Commerciale" name="offreCommerciale" value={contrat.offreCommerciale} onChange={handleContratChange} isRequired />
                 <LabeledInput label="Immatriculation" name="immatriculation" value={contrat.immatriculation} onChange={handleContratChange} />
                 <LabeledInput label="Prime Annuelle" name="primeAnnuelle" value={contrat.primeAnnuelle} onChange={handleContratChange} />
                 <LabeledInput label="Échéance" name="echeanceContractuelle" value={contrat.echeanceContractuelle} onChange={handleContratChange} />
