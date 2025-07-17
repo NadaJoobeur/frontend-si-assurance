@@ -18,13 +18,22 @@ const CreateSinistrePage = () => {
   const { mutate: createSinistre, isPending } = useCreateSinistre();
   const pageBg = useColorModeValue('gray.50', 'gray.900');
 
-  const handleSubmit = (formData: SinistreFormData) => {
-    createSinistre(formData, {
-      onSuccess: () => {
-        navigate('/sinistre/list'); // Redirection vers la liste des sinistres après création
-      },
-    });
-  };
+// Dans le handleSubmit :
+const handleSubmit = (formData: SinistreFormData) => {
+  const immatArray = formData.numeroImmatriculation
+    ? formData.numeroImmatriculation.split(',').map(s => s.trim())
+    : [];
+
+  createSinistre(
+    {
+      ...formData,
+      numeroImmatriculation: immatArray, // OK car c’est ton payload API interne
+    } as any, // 👈 ou crée un type `CreateSinistrePayload` séparé
+    {
+      onSuccess: () => navigate('/sinistre/list'),
+    }
+  );
+};
 
   return (
     <Box minH="100vh" bg={pageBg} display="flex" flexDirection="column">

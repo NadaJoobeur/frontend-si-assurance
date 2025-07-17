@@ -375,7 +375,7 @@ const bgBx=useColorModeValue('white', 'gray.700')
     <Text fontSize="lg" color="gray.500" mt={4}>
       Aucun contrat trouvé
     </Text>
-  )}
+  )} 
 </TabPanel>
               </TabPanels>
             </Tabs>

@@ -13,7 +13,8 @@ import {
   AlertDialogHeader, 
   AlertDialogBody, 
   AlertDialogFooter, 
-  Button 
+  Button,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import type { AgenceBase } from '../types/Agence';
@@ -28,6 +29,12 @@ type Props = {
 const AgenceItem = ({ agenceData, onClick, onDelete, onEdit }: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef<HTMLButtonElement>(null);
+
+  // Style hover unifié et subtil
+  const hoverStyle = {
+    bg: useColorModeValue('blackAlpha.50', 'whiteAlpha.100'), // Très léger en mode clair, subtil en mode sombre
+    transition: 'background-color 0.2s ease'
+  };
 
   const handleDeleteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -49,7 +56,7 @@ const AgenceItem = ({ agenceData, onClick, onDelete, onEdit }: Props) => {
         borderRadius="lg"
         shadow="sm"
         cursor={onClick ? 'pointer' : 'default'}
-        _hover={onClick ? { bg: 'blue.50' } : {}}
+        _hover={onClick ? hoverStyle : {}}
         onClick={onClick}
         display="flex"
         alignItems="center"
@@ -121,5 +128,3 @@ const AgenceItem = ({ agenceData, onClick, onDelete, onEdit }: Props) => {
 };
 
 export default AgenceItem;
-
-

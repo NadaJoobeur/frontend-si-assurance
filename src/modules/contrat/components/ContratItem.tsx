@@ -1,18 +1,40 @@
 import React from 'react';
-import { Box, Text, Badge, HStack, IconButton, Spacer, useDisclosure, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, Button } from '@chakra-ui/react';
+import { 
+  Box, 
+  Text, 
+  Badge, 
+  HStack, 
+  IconButton, 
+  Spacer, 
+  useDisclosure, 
+  AlertDialog, 
+  AlertDialogOverlay, 
+  AlertDialogContent, 
+  AlertDialogHeader, 
+  AlertDialogBody, 
+  AlertDialogFooter, 
+  Button,
+  useColorModeValue
+} from '@chakra-ui/react';
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import type { ContratFormData } from '../types/Contrat';
 
 type Props = {
   contratData: ContratFormData;
   onClick?: () => void;
-  onDelete?: (id: string) => Promise<void>; // Modifié pour accepter une Promise
+  onDelete?: (id: string) => Promise<void>;
   onEdit?: (id: string) => void;
 };
 
 const ContratItem = ({ contratData, onClick, onDelete, onEdit }: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef<HTMLButtonElement>(null);
+
+  // Style hover unifié et subtil
+  const hoverStyle = {
+    bg: useColorModeValue('blackAlpha.50', 'whiteAlpha.100'),
+    transition: 'background-color 0.2s ease'
+  };
 
   const handleDeleteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -25,7 +47,6 @@ const ContratItem = ({ contratData, onClick, onDelete, onEdit }: Props) => {
     }
     onClose();
   };
-  
 
   return (
     <>
@@ -35,7 +56,7 @@ const ContratItem = ({ contratData, onClick, onDelete, onEdit }: Props) => {
         borderRadius="lg"
         shadow="sm"
         cursor={onClick ? 'pointer' : 'default'}
-        _hover={onClick ? { bg: 'blue.50' } : {}}
+        _hover={onClick ? hoverStyle : {}}
         onClick={onClick}
         display="flex"
         alignItems="center"
@@ -58,10 +79,10 @@ const ContratItem = ({ contratData, onClick, onDelete, onEdit }: Props) => {
             size="sm"
             onClick={(e) => {
               e.stopPropagation()
-              if (onEdit) onEdit(contratData.numeroContrat) // ⚠️ change ici
-            }}/>
-
-  
+              if (onEdit) onEdit(contratData.numeroContrat)
+            }}
+          />
+          
           <IconButton
             aria-label="Supprimer"
             icon={<FaTrash />}

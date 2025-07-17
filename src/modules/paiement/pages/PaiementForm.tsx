@@ -172,7 +172,7 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
           />
         </FormControl>
 
-        <FormControl>
+        <FormControl isRequired>
           <FormLabel>Nom du porteur de carte</FormLabel>
           <Input
             value={cardholderName}
@@ -189,7 +189,7 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
           />
         </FormControl>
 
-        <FormControl>
+        <FormControl isRequired>
           <FormLabel>Devise</FormLabel>
           <Select
             placeholder="Sélectionner une devise"
@@ -247,7 +247,7 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
                     />
                   </FormControl>
 
-                  <FormControl>
+                  <FormControl isRequired>
                     <FormLabel>Code Branche</FormLabel>
                     <Input
                       value={q.codeBranche}
@@ -257,7 +257,7 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
                     />
                   </FormControl>
 
-                  <FormControl>
+                  <FormControl isRequired>
                     <FormLabel>Code Produit</FormLabel>
                     <Input
                       value={q.codeProduit}
@@ -267,7 +267,7 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
                     />
                   </FormControl>
 
-                  <FormControl>
+                  <FormControl isRequired>
                     <FormLabel>Identification Client</FormLabel>
                     <Input
                       value={q.identificationClient}
@@ -277,7 +277,7 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
                     />
                   </FormControl>
 
-                  <FormControl>
+                  <FormControl isRequired>
                     <FormLabel>Nom Client</FormLabel>
                     <Input
                       value={q.nomClient}
@@ -287,7 +287,7 @@ export const PaiementForm: React.FC<PaiementFormProps> = ({
                     />
                   </FormControl>
 
-                  <FormControl>
+                  <FormControl isRequired>
                     <FormLabel>Prime Totale</FormLabel>
                     <Input
                       type="number"

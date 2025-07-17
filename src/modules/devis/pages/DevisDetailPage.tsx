@@ -46,15 +46,16 @@ import type { IconType } from 'react-icons/lib';
 import { FaBolt, FaCalendarAlt, FaCar, FaHashtag, FaLayerGroup, FaMoneyBillWave, FaTag, FaTools, FaUserCheck, FaWeightHanging } from 'react-icons/fa';
 function useDevisColorMode() {
   return {
-    bgBl: useColorModeValue('blue.100', 'blue.800'),
+    bgBl: useColorModeValue('gray.100', 'gray.800'),
     bgCard: useColorModeValue('white', 'gray.800'),
-    borderBl: useColorModeValue('blue.200', 'blue.700'),
-    textBl: useColorModeValue('blue.800', 'blue.200'),
+    borderBl: useColorModeValue('gray.300', 'gray.600'),
+    textBl: useColorModeValue('gray.800', 'gray.200'),
     cardBg: useColorModeValue('white', 'gray.700'),
     dividerColor: useColorModeValue('gray.200', 'gray.600'),
-    borderColor: useColorModeValue('gray.200', 'gray.700')
+    borderColor: useColorModeValue('gray.200', 'gray.700'),
   };
 }
+
 const DevisDetailPage = () => {
      const {
     bgBl,
@@ -221,18 +222,18 @@ navigate(`/devis/to/contrat/${id_devis}`);
   mb={6}
   boxShadow="sm"
   borderWidth="1px"
-  borderColor={bgBl}
+  borderColor={borderBl}
 >
   <Flex justify="space-between" align="center" mb={4}>
-    <Heading size="md" color={borderBl}>
+    <Heading size="md" color={textBl}>
       <Icon as={FiFileText} mr={2} />
       Détails Financiers du Devis
     </Heading>
     <Badge 
-      colorScheme="blue" 
-      fontSize="md" 
-      px={3} 
-      py={1} 
+      colorScheme="gray"
+      fontSize="md"
+      px={3}
+      py={1}
       borderRadius="full"
       variant="subtle"
     >
@@ -242,49 +243,26 @@ navigate(`/devis/to/contrat/${id_devis}`);
   </Flex>
 
   <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-    {/* Colonne Primes Assurance */}
     <FinancialCard 
       title="Primes Assurance"
       icon={FiShield}
       items={[
-        { 
-          label: "Prime de base", 
-          value: resultat?.montantPrimeNette, 
-          color: "green",
-          tooltip: "Montant hors taxes et frais"
-        },
-        { 
-          label: "Commission", 
-          value: resultat?.montantComission, 
-          color: "blue",
-          tooltip: "Commission de l'agence"
-        }
+        { label: "Prime de base", value: resultat?.montantPrimeNette, color: "green" },
+        { label: "Commission", value: resultat?.montantComission, color: "gray" }
       ]}
       bg={bgCard}
     />
 
-    {/* Colonne Taxes & Frais */}
     <FinancialCard 
       title="Réglementation"
       icon={FiPercent}
       items={[
-        { 
-          label: "Frais dossier", 
-          value: resultat?.montantFrais, 
-          color: "orange",
-          tooltip: "Frais administratifs"
-        },
-        { 
-          label: "Taxes légales", 
-          value: resultat?.montantTaxe, 
-          color: "red",
-          tooltip: "Taxes gouvernementales"
-        }
+        { label: "Frais dossier", value: resultat?.montantFrais, color: "orange" },
+        { label: "Taxes légales", value: resultat?.montantTaxe, color: "red" }
       ]}
       bg={bgCard}
     />
 
-    {/* Colonne Total */}
     <Box 
       bg={bgBl}
       p={4}
@@ -309,8 +287,8 @@ navigate(`/devis/to/contrat/${id_devis}`);
       </Heading>
       <Flex direction="column" align="center">
         <Text 
-          fontSize="2xl" 
-          fontWeight="bold" 
+          fontSize="2xl"
+          fontWeight="bold"
           mb={2}
           color={textBl}
         >
@@ -323,6 +301,7 @@ navigate(`/devis/to/contrat/${id_devis}`);
     </Box>
   </SimpleGrid>
 </Box>
+
 
             <Divider borderColor={dividerColor} my={5} borderWidth="2px" />
 
@@ -370,15 +349,15 @@ navigate(`/devis/to/contrat/${id_devis}`);
                 {/* Profil Véhicule */}
 <TabPanel>
   {profilVehicule ? (
-    <Box          p={6}
-    borderWidth="2px"
-    borderRadius="lg"
-    borderColor={dividerColor}
-    bg="gray.50"
-    boxShadow="md">
-
+    <Box
+      p={6}
+      borderWidth="2px"
+      borderRadius="lg"
+      borderColor={dividerColor}
+      bg={bgBl}   // ✔️ Utilise le même fond cohérent
+      boxShadow="md"
+    >
       <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={6}>
-
         {/* Immatriculation & identification */}
         <InfoItem1 label="Immatriculation" value={profilVehicule.numeroImmatriculation} icon={<FaCar />} />
         <InfoItem1 label="Numéro de série" value={profilVehicule.numeroSerie} icon={<FaHashtag />} />
@@ -386,8 +365,8 @@ navigate(`/devis/to/contrat/${id_devis}`);
         <InfoItem1 label="Constructeur" value={profilVehicule.constructeur} icon={<FaTools />} />
 
         {/* Type & nature */}
-        <InfoItem1 label="Type" value={profilVehicule.typeVehicule}  icon={<FaTag />}/>
-        <InfoItem1 label="Nature" value={profilVehicule.natureVehicule} icon={<FaLayerGroup/>} />
+        <InfoItem1 label="Type" value={profilVehicule.typeVehicule} icon={<FaTag />} />
+        <InfoItem1 label="Nature" value={profilVehicule.natureVehicule} icon={<FaLayerGroup />} />
 
         {/* Dates importantes */}
         <InfoItem1 label="Date 1ère mise en circulation" value={formatDate(profilVehicule.datePremiereMise)} icon={<FaCalendarAlt />} />
@@ -396,16 +375,15 @@ navigate(`/devis/to/contrat/${id_devis}`);
         {/* Capacités & poids */}
         <InfoItem1 label="Charge utile" value={`${profilVehicule.ChargeUtile} kg`} icon={<FaWeightHanging />} />
         <InfoItem1 label="Poids total en charge" value={`${profilVehicule.poidsTotalEnCharge} kg`} icon={<FaWeightHanging />} />
-        <InfoItem1 label="Nombre de places" value={profilVehicule.nombreDePlaces} icon={<FaUserCheck/>} />
+        <InfoItem1 label="Nombre de places" value={profilVehicule.nombreDePlaces} icon={<FaUserCheck />} />
 
         {/* Performances & valeurs */}
-        <InfoItem1 label="Puissance fiscale" value={`${profilVehicule.puissanceFiscale} CV `} icon={<FaBolt/>}/>
-        <InfoItem1 label="Valeur vénale" value={`${profilVehicule.valeurVenale} dt`} icon={<FaMoneyBillWave/>}/>
-        <InfoItem1 label="Bonus/Malus" value={profilVehicule.bonusMalus} icon={<FaHashtag/>}/>
-
+        <InfoItem1 label="Puissance fiscale" value={`${profilVehicule.puissanceFiscale} CV`} icon={<FaBolt />} />
+        <InfoItem1 label="Valeur vénale" value={`${profilVehicule.valeurVenale} dt`} icon={<FaMoneyBillWave />} />
+        <InfoItem1 label="Bonus/Malus" value={profilVehicule.bonusMalus} icon={<FaHashtag />} />
       </SimpleGrid>
     </Box>
-  ) : (
+   ) : (
     <Text fontSize="md" color="gray.500" mt={4}>
       Aucune information véhicule disponible.
     </Text>
@@ -413,46 +391,77 @@ navigate(`/devis/to/contrat/${id_devis}`);
 </TabPanel>
 
 
-                {/* Garanties */}
-                <TabPanel>
-                  {garanties && garanties.length > 0 ? (
-                    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={3}>
-                      {garanties.map((garantie, index) => (
-                        <Box
-                          key={`${garantie.codeGarantie}-${index}`}
-                           p={6}
-                            borderWidth="2px"
-                            borderRadius="lg"
-                            borderColor={dividerColor}
-                            bg="gray.50"
-                            boxShadow="md"
-                            _hover={{ transform: 'scale(1.02)', transition: 'transform 0.2s' }} 
 
-                        >
-                          <Flex justify="space-between" mb={4}>
-                            <Text fontSize="lg" fontWeight="bold">{garantie.libelleGarantie}</Text>
-                            <Tag colorScheme="blue" size="md">
-                              <TagLabel>{garantie.codeGarantie}</TagLabel>
-                            </Tag>
-                          </Flex>
-                          <Stack spacing={3}>
-                            {garantie.capitalAssure && (
-                              <Text fontSize="md">Capital: {garantie.capitalAssure} €</Text>
-                            )}
-                            {garantie.franchise && (
-                              <Text fontSize="md">Franchise: {garantie.franchise} €</Text>
-                            )}
-                            {garantie.rangAffichage !== undefined && (
-                              <Text fontSize="md" color="gray.500">Rang: {garantie.rangAffichage}</Text>
-                            )}
-                          </Stack>
-                        </Box>
-                      ))}
-                    </SimpleGrid>
-                  ) : (
-                    <Text fontSize="lg" color="gray.500" mt={4}>Aucune garantie associée à ce devis</Text>
-                  )}
-                </TabPanel>
+                {/* Garanties */}
+                {/* ✅ Bloc Garanties refait complet */}
+<TabPanel>
+  {garanties && garanties.length > 0 ? (
+    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
+      {garanties.map((garantie, index) => (
+        <Box
+          key={`${garantie.codeGarantie}-${index}`}
+          p={6}
+          borderWidth="2px"
+          borderRadius="lg"
+          borderColor={dividerColor}
+          bg={useColorModeValue('gray.50', 'gray.700')}
+          boxShadow="md"
+          transition="all 0.3s ease"
+          _hover={{
+            bg: useColorModeValue('gray.200', 'gray.600'),
+            transform: 'scale(1.02)',
+            boxShadow: 'lg',
+          }}
+        >
+          <Flex justify="space-between" mb={4}>
+            <Text
+              fontSize="lg"
+              fontWeight="bold"
+              color={useColorModeValue('gray.800', 'gray.100')}
+            >
+              {garantie.libelleGarantie}
+            </Text>
+            <Tag colorScheme="blue" size="md">
+              <TagLabel>{garantie.codeGarantie}</TagLabel>
+            </Tag>
+          </Flex>
+
+          <Stack spacing={3}>
+            {garantie.capitalAssure && (
+              <Text
+                fontSize="md"
+                color={useColorModeValue('gray.700', 'gray.200')}
+              >
+                Capital assuré : {garantie.capitalAssure} €
+              </Text>
+            )}
+            {garantie.franchise && (
+              <Text
+                fontSize="md"
+                color={useColorModeValue('gray.700', 'gray.200')}
+              >
+                Franchise : {garantie.franchise} €
+              </Text>
+            )}
+            {garantie.rangAffichage !== undefined && (
+              <Text
+                fontSize="md"
+                color={useColorModeValue('gray.500', 'gray.300')}
+              >
+                Rang : {garantie.rangAffichage}
+              </Text>
+            )}
+          </Stack>
+        </Box>
+      ))}
+    </SimpleGrid>
+  ) : (
+    <Text fontSize="lg" color="gray.500" mt={4}>
+      Aucune garantie associée à ce devis.
+    </Text>
+  )}
+</TabPanel>
+
               </TabPanels>
             </Tabs>
           </Box>

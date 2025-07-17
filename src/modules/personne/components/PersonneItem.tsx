@@ -1,4 +1,4 @@
-import { Box, Text, Badge, HStack, IconButton, Spacer } from '@chakra-ui/react'
+import { Box, Text, Badge, HStack, IconButton, Spacer, useColorModeValue } from '@chakra-ui/react'
 import { FaTrash, FaEdit } from 'react-icons/fa'
 import type { Personne } from '../types/personne'
 
@@ -9,7 +9,13 @@ type Props = {
   onEdit?: (id: string) => void 
 }
 
-const PersonneItem = ({ personne, onClick, onDelete, onEdit }: Props) => {
+const PersonneItem = ({ personne, onClick, onEdit, onDelete }: Props) => {
+  // Style hover unifié et subtil
+  const hoverStyle = {
+    bg: useColorModeValue('blackAlpha.50', 'whiteAlpha.100'), // Très léger en mode clair, subtil en mode sombre
+    transition: 'background-color 0.2s ease'
+  }
+
   return (
     <Box
       p={4}
@@ -17,7 +23,7 @@ const PersonneItem = ({ personne, onClick, onDelete, onEdit }: Props) => {
       borderRadius="lg"
       shadow="sm"
       cursor={onClick ? 'pointer' : 'default'}
-      _hover={onClick ? { bg:'blue.100' } : {}}
+      _hover={onClick ? hoverStyle : {}}
       onClick={onClick}
       display="flex"
       alignItems="center"
@@ -35,15 +41,15 @@ const PersonneItem = ({ personne, onClick, onDelete, onEdit }: Props) => {
       <Spacer />
 
       <HStack spacing={2}>
-       <IconButton
-  aria-label="Modifier"
-  icon={<FaEdit />}
-  size="sm"
-  onClick={(e) => {
-    e.stopPropagation()
-    if (onEdit) onEdit(personne.id) // ⚠️ change ici
-  }}
-/>
+        <IconButton
+          aria-label="Modifier"
+          icon={<FaEdit />}
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation()
+            if (onEdit) onEdit(personne.id)
+          }}
+        />
         <IconButton
           aria-label="Supprimer"
           icon={<FaTrash />}

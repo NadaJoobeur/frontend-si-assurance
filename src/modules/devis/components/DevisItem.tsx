@@ -13,7 +13,8 @@ import {
   AlertDialogHeader, 
   AlertDialogBody, 
   AlertDialogFooter, 
-  Button 
+  Button,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import type { Devis } from '../types/Devis';
@@ -29,6 +30,12 @@ const DevisItem = ({ devisData, onClick, onDelete, onEdit }: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef<HTMLButtonElement>(null);
 
+  // Style hover unifié et subtil
+  const hoverStyle = {
+    bg: useColorModeValue('blackAlpha.50', 'whiteAlpha.100'),
+    transition: 'background-color 0.2s ease'
+  };
+
   const handleDeleteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     onOpen();
@@ -40,8 +47,6 @@ const DevisItem = ({ devisData, onClick, onDelete, onEdit }: Props) => {
     }
     onClose();
   };
-
-
 
   // Fonction pour obtenir le badge en fonction du statut
   const getStatusBadge = (statut: Devis['statut']) => {
@@ -69,7 +74,7 @@ const DevisItem = ({ devisData, onClick, onDelete, onEdit }: Props) => {
         borderRadius="lg"
         shadow="sm"
         cursor={onClick ? 'pointer' : 'default'}
-        _hover={onClick ? { bg: 'blue.50' } : {}}
+        _hover={onClick ? hoverStyle : {}}
         onClick={onClick}
         display="flex"
         alignItems="center"
@@ -108,7 +113,6 @@ const DevisItem = ({ devisData, onClick, onDelete, onEdit }: Props) => {
             size="sm"
             colorScheme="red"
             onClick={handleDeleteClick}
-            
           />
         </HStack>
       </Box>

@@ -308,27 +308,75 @@ const HomePage = () => {
 }
 
 // Composant de carte statistique
-const StatCard = ({ title, value, change, trend, icon, color, onClick  }) => {
+const StatCard = ({ title, value, change, trend, icon, color, onClick }) => {
   const cardBg = useColorModeValue('white', 'gray.800')
   const cardBorder = useColorModeValue('gray.100', 'gray.700')
+  const textColor = useColorModeValue('gray.800', 'gray.100')
+  
+  // Effets pour le mode nocturne
+  const nightModeEffects = {
+    hover: {
+      transform: 'translateY(-2px)',
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      borderColor: `${color}.400`,
+      _before: {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '2px',
+        bg: `${color}.400`,
+        borderRadius: 'lg lg 0 0',
+        opacity: 0.7
+      }
+    },
+    active: {
+      transform: 'translateY(0)',
+      boxShadow: 'none'
+    }
+  }
+
+  // Effets pour le mode clair
+  const lightModeEffects = {
+    hover: {
+      transform: 'translateY(-2px)',
+      boxShadow: 'md',
+      borderColor: `${color}.300`
+    },
+    active: {
+      transform: 'translateY(0)',
+      boxShadow: 'sm'
+    }
+  }
+
+  const effects = useColorModeValue(lightModeEffects, nightModeEffects)
 
   return (
-      <Box 
-      bg={cardBg} 
-      p={4} 
-      borderRadius="lg" 
-      border="1px solid" 
+    <Box
+      position="relative"
+      bg={cardBg}
+      p={4}
+      borderRadius="lg"
+      border="1px solid"
       borderColor={cardBorder}
-      boxShadow="sm"
-      cursor={onClick ? 'pointer' : 'default'} 
-      onClick={onClick} 
-      _hover={onClick ? { bg: `${color}.50`, transform: 'scale(1.02)' } : {}} 
-      transition="all 0.2s"
+      color={textColor}
+      cursor={onClick ? 'pointer' : 'default'}
+      onClick={onClick}
+      transition="all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)"
+      _hover={onClick ? effects.hover : {}}
+      _active={onClick ? effects.active : {}}
+      overflow="hidden"
     >
       <Stat>
         <HStack justify="space-between">
-          <StatLabel color="gray.500">{title}</StatLabel>
-          <Icon as={icon} color={`${color}.400`} boxSize={5} />
+          <StatLabel color={useColorModeValue('gray.600', 'gray.300')}>{title}</StatLabel>
+          <Icon 
+            as={icon} 
+            color={`${color}.400`} 
+            boxSize={5}
+            opacity={0.8}
+          />
         </HStack>
         <StatNumber fontSize="2xl" mt={2} mb={1}>
           {value.toLocaleString()}

@@ -13,7 +13,8 @@ import {
   AlertDialogHeader, 
   AlertDialogBody, 
   AlertDialogFooter, 
-  Button 
+  Button,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import type { Sinistre } from '../types/Sinistre';
@@ -28,6 +29,12 @@ type Props = {
 const SinistreItem = ({ sinistreData, onClick, onDelete, onEdit }: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef<HTMLButtonElement>(null);
+
+  // Style hover unifié et subtil
+  const hoverStyle = {
+    bg: useColorModeValue('blackAlpha.50', 'whiteAlpha.100'),
+    transition: 'background-color 0.2s ease'
+  };
 
   const handleDeleteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -69,14 +76,13 @@ const SinistreItem = ({ sinistreData, onClick, onDelete, onEdit }: Props) => {
         borderRadius="lg"
         shadow="sm"
         cursor={onClick ? 'pointer' : 'default'}
-        _hover={onClick ? { bg: 'blue.50' } : {}}
+        _hover={onClick ? hoverStyle : {}}
         onClick={onClick}
         display="flex"
         alignItems="center"
       >
         <Box flex="1">
           <Text fontWeight="bold" fontSize="lg">
-           
             #{sinistreData.numeroSinistre}
           </Text>
           <Text fontSize="sm" color="gray.500">

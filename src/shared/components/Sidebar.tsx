@@ -189,17 +189,25 @@ const Sidebar = () => {
           borderColor={useColorModeValue('gray.200', 'gray.700')}
         >
           <Button
-            leftIcon={<FiLogOut />}
-            variant="outline"
-            colorScheme="red"
-            size="md"
-            w="full"
-            onClick={onOpen}
-            _hover={{ bg: 'red.50' }}
-            aria-label="Se déconnecter"
-          >
-            Se déconnecter
-          </Button>
+  leftIcon={<FiLogOut />}
+  variant="outline"
+  colorScheme="red"
+  size="md"
+  w="full"
+  onClick={onOpen}
+  _hover={{ 
+    bg: useColorModeValue('red.50', 'whiteAlpha.100'),
+    transform: 'translateY(-1px)',
+    shadow: 'sm'
+  }}
+  _active={{
+    transform: 'translateY(0)'
+  }}
+  transition="all 0.2s ease"
+  aria-label="Se déconnecter"
+>
+  Se déconnecter
+</Button>
         </Box>
       </Box>
 
